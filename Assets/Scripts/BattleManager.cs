@@ -24,13 +24,14 @@ public class BattleManager : MonoBehaviour
     public Button cardButton2;
     public Button cardButton3;
 
-    List<string> deck = new List<string>();
-    List<string> hand = new List<string>();
-    List<string> discardPile = new List<string>();
+    public CardData attackCard;
+    public CardData strongAttackCard;
+    public CardData healCard;
 
-    string card1;
-    string card2;
-    string card3;
+    List<CardData> deck = new List<CardData>();
+    List<CardData> hand = new List<CardData>();
+    List<CardData> discardPile = new List<CardData>();
+
 
     string[] enemyNames = { "슬라임", "고블린", "늑대" };
     int[] enemyMaxHps = { 50, 70, 90 };
@@ -53,12 +54,12 @@ public class BattleManager : MonoBehaviour
     {
         deck.Clear();
 
-        deck.Add("공격 카드");
-        deck.Add("공격 카드");
-        deck.Add("공격 카드");
-        deck.Add("공격 카드");
-        deck.Add("강공격 카드");
-        deck.Add("회복 카드");
+        deck.Add(attackCard);
+        deck.Add(attackCard);
+        deck.Add(attackCard);
+        deck.Add(attackCard);
+        deck.Add(strongAttackCard);
+        deck.Add(healCard);
     }
 
     void ShuffleDeck()
@@ -67,7 +68,7 @@ public class BattleManager : MonoBehaviour
         {
             int randomIndex = Random.Range(i, deck.Count);
 
-            string temp = deck[i];
+            CardData temp = deck[i];
             deck[i] = deck[randomIndex];
             deck[randomIndex] = temp;
         }
@@ -81,9 +82,9 @@ public class BattleManager : MonoBehaviour
         DrawOneCard();
         DrawOneCard();
 
-        cardButton1.GetComponentInChildren<TMP_Text>().text = hand[0];
-        cardButton2.GetComponentInChildren<TMP_Text>().text = hand[1];
-        cardButton3.GetComponentInChildren<TMP_Text>().text = hand[2];
+        cardButton1.GetComponentInChildren<TMP_Text>().text = hand[0].cardName;
+        cardButton2.GetComponentInChildren<TMP_Text>().text = hand[1].cardName;
+        cardButton3.GetComponentInChildren<TMP_Text>().text = hand[2].cardName;
     }
 
     void DrawOneCard()
@@ -95,7 +96,7 @@ public class BattleManager : MonoBehaviour
             ShuffleDeck();
         }
 
-        string card = deck[0];
+        CardData card = deck[0];
         deck.RemoveAt(0);
         hand.Add(card);
     }
@@ -123,19 +124,15 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        string cardName = hand[handIndex];
+        CardData card = hand[handIndex];
 
-        if(cardName=="공격 카드")
+        if(card.cardType==CardType.Attack)
         {
-            enemyHp -= 10;
+            enemyHp -= card.damage;
         }
-        else if(cardName=="강공격 카드")
+        else if(card.cardType==CardType.Heal)
         {
-            enemyHp -= 20;
-        }
-        else if(cardName=="회복 카드")
-        {
-            playerHp += 15;
+            playerHp += card.heal;
 
             if (playerHp > 100)
             {
@@ -147,12 +144,17 @@ public class BattleManager : MonoBehaviour
 
         CheckEnemyDead();
 
-        if (enemyHp > 0)
+        if (currentEnemyIndex<enemyNames.Length &&enemyHp > 0)
         {
             EnemyAttack();
         }
 
-        DrawCards();
+        if (currentEnemyIndex < enemyNames.Length)
+        {
+            DrawCards();
+
+        }
+
         UpdateUI();
     }
 
@@ -186,7 +188,7 @@ public class BattleManager : MonoBehaviour
             if (currentEnemyIndex >= enemyNames.Length)
             {
                 enemyHp = 0;
-                resultText.text = "최종 승리";
+                resultText.text = "클리어";
             }
             else
             {
