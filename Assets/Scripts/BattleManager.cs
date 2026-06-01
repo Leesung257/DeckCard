@@ -1,8 +1,10 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class BattleManager : MonoBehaviour
 {
@@ -30,9 +32,16 @@ public class BattleManager : MonoBehaviour
     string card2;
     string card3;
 
+    string[] enemyNames = { "슬라임", "고블린", "늑대" };
+    int[] enemyMaxHps = { 50, 70, 90 };
+    int currentEnemyIndex = 0;
+
     void Start()
     {
         resultText.text = "";
+
+        enemyHp = enemyMaxHps[currentEnemyIndex];
+
 
         MakeDeck();
         ShuffleDeck();
@@ -109,7 +118,7 @@ public class BattleManager : MonoBehaviour
 
     void UseCard(int handIndex)
     {
-        if (enemyHp <= 0 || playerHp <= 0)
+        if (playerHp <= 0 || currentEnemyIndex >= enemyNames.Length)
         {
             return;
         }
@@ -172,16 +181,34 @@ public class BattleManager : MonoBehaviour
     {
         if(enemyHp<=0)
         {
-            enemyHp = 0;
-            resultText.text = "승리!";
+            currentEnemyIndex++;
+
+            if (currentEnemyIndex >= enemyNames.Length)
+            {
+                enemyHp = 0;
+                resultText.text = "최종 승리";
+            }
+            else
+            {
+                enemyHp = enemyMaxHps[currentEnemyIndex];
+                resultText.text = enemyNames[currentEnemyIndex] + " 등장";
+            }
         }
     }
     void UpdateUI()
     {
         playerHpText.text = "플레이어 HP : " + playerHp;
-        enemyHpText.text = "슬라임 HP : " + enemyHp;
 
-        deckCountText.text = "덱 : " + deck.Count;
+        if (currentEnemyIndex < enemyNames.Length)
+        {
+            enemyHpText.text = enemyNames[currentEnemyIndex] + " HP : " + enemyHp;
+        }
+        else
+        {
+            enemyHpText.text = "적 전멸";
+        }
+
+            deckCountText.text = "덱 : " + deck.Count;
         handCountText.text = "손패 : " + hand.Count;
         discardCountText.text = "버림더미 : " + discardPile.Count;
     }
