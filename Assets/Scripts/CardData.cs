@@ -16,7 +16,12 @@ public class CardData : ScriptableObject
     public int heal;
     public int defense;
 
-    public string GetDescription()
+    public bool canUpgrade = true;
+    public int upgradeDamage;
+    public int upgradeHeal;
+    public int upgradeDefense;
+
+    /*public string GetDescription()
     {
         if (cardType == CardType.Attack)
         {
@@ -32,5 +37,5 @@ public class CardData : ScriptableObject
         }
 
         return "";
-    }
+    }*/
 }

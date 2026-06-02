@@ -42,6 +42,8 @@ public class BattleManager : MonoBehaviour
 
     public Button nextStageButton;
 
+    public Button upgradeCardButton;
+
     private CardData rewardCard1;
     private CardData rewardCard2;
     private CardData rewardCard3;
@@ -51,9 +53,9 @@ public class BattleManager : MonoBehaviour
     public CardData healCard;
     public CardData defenseCard;
 
-    List<CardData> deck = new List<CardData>();
-    List<CardData> hand = new List<CardData>();
-    List<CardData> discardPile = new List<CardData>();
+    List<CardInstance> deck = new List<CardInstance>();
+    List<CardInstance> hand = new List<CardInstance>();
+    List<CardInstance> discardPile = new List<CardInstance>();
 
     public Slider playerHpSlider;
     public Slider enemyHpSlider;
@@ -67,6 +69,8 @@ public class BattleManager : MonoBehaviour
 
     bool isChoosingReward = false;
 
+    CardData selectUpgradeCard;
+
     void Start()
     { 
         resultText.text = "";
@@ -76,6 +80,7 @@ public class BattleManager : MonoBehaviour
 
         HideRewardButtons();
         nextStageButton.gameObject.SetActive(false);
+        upgradeCardButton.gameObject.SetActive(false);
 
         enemyHp = enemies[currentEnemyIndex].maxHp;
 
@@ -95,14 +100,14 @@ public class BattleManager : MonoBehaviour
     {
         deck.Clear();
 
-        deck.Add(attackCard);
-        deck.Add(attackCard);
-        deck.Add(attackCard);
-        deck.Add(attackCard);
-        deck.Add(strongAttackCard);
-        deck.Add(healCard);
-        deck.Add(defenseCard);
-        deck.Add(defenseCard);
+        deck.Add(new CardInstance(attackCard));
+        deck.Add(new CardInstance(attackCard));
+        deck.Add(new CardInstance(attackCard));
+        deck.Add(new CardInstance(attackCard));
+        deck.Add(new CardInstance(strongAttackCard));
+        deck.Add(new CardInstance(healCard));
+        deck.Add(new CardInstance(defenseCard));
+        deck.Add(new CardInstance(defenseCard));
     }
 
     void HideRewardButtons()
@@ -129,9 +134,9 @@ public class BattleManager : MonoBehaviour
         //rewardButton1.GetComponentInChildren<TMP_Text>().text = rewardCard1.cardName;
         //rewardButton2.GetComponentInChildren<TMP_Text>().text = rewardCard2.cardName;
         //rewardButton3.GetComponentInChildren<TMP_Text>().text = rewardCard3.cardName;
-        SetcardButtonText(rewardButton1, rewardCard1);
-        SetcardButtonText(rewardButton2, rewardCard2);
-        SetcardButtonText(rewardButton3, rewardCard3);
+        SetRewardButtonText(rewardButton1, rewardCard1);
+        SetRewardButtonText(rewardButton2, rewardCard2);
+        SetRewardButtonText(rewardButton3, rewardCard3);
     }
 
     CardData GetRandomRewardCard()
@@ -172,7 +177,7 @@ public class BattleManager : MonoBehaviour
 
     void SelectReward(CardData selectCard)
     {
-        discardPile.Add(selectCard);
+        discardPile.Add(new CardInstance(selectCard));
         
         HideRewardButtons();
 
@@ -180,6 +185,7 @@ public class BattleManager : MonoBehaviour
         AddLog(selectCard.cardName + " 획득");
 
         nextStageButton.gameObject.SetActive(true);
+        upgradeCardButton.gameObject.SetActive(true);
 
         //DiscardHand();
         //DrawCards();
@@ -192,7 +198,7 @@ public class BattleManager : MonoBehaviour
         {
             int randomIndex = Random.Range(i, deck.Count);
 
-            CardData temp = deck[i];
+            CardInstance temp = deck[i];
             deck[i] = deck[randomIndex];
             deck[randomIndex] = temp;
         }
@@ -223,7 +229,7 @@ public class BattleManager : MonoBehaviour
             ShuffleDeck();
         }
 
-        CardData card = deck[0];
+        CardInstance card = deck[0];
         deck.RemoveAt(0);
         hand.Add(card);
     }
@@ -251,18 +257,18 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        CardData card = hand[handIndex];
+        CardInstance card = hand[handIndex];
 
-        if(card.cardType==CardType.Attack)
+        if(card.cardData.cardType==CardType.Attack)
         {
-            enemyHp -= card.damage;
-            AddLog(card.cardName + " 사용" + card.damage + " 데미지");
+            enemyHp -= card.GetDamage();
+            AddLog(card.GetCardName() + " 사용" + card.GetDamage() + " 데미지");
         }
-        else if(card.cardType==CardType.Heal)
+        else if(card.cardData.cardType==CardType.Heal)
         {
             int beforeHp = playerHp;
 
-            playerHp += card.heal;
+            playerHp += card.GetHeal();
 
             if (playerHp > playerMaxHp)
             {
@@ -271,12 +277,12 @@ public class BattleManager : MonoBehaviour
 
             int actualHeal = playerHp - beforeHp;
 
-            AddLog(card.cardName + " 사용 HP " + actualHeal + " 회복");
+            AddLog(card.GetCardName() + " 사용 HP " + actualHeal + " 회복");
         }
-        else if (card.cardType == CardType.Defense)
+        else if (card.cardData.cardType == CardType.Defense)
         {
-            playerDefense += card.defense;
-            AddLog(card.cardName + " 사용! 방어도 " + card.defense + " 획득");
+            playerDefense += card.GetDefense();
+            AddLog(card.GetCardName() + " 사용! 방어도 " + card.GetDefense() + " 획득");
         }
 
             DiscardHand();
@@ -401,6 +407,7 @@ public class BattleManager : MonoBehaviour
         AddLog("Stage " + (currentEnemyIndex + 1) + " 시작" + enemies[currentEnemyIndex].enemyName);
 
         nextStageButton.gameObject.SetActive(false);
+        upgradeCardButton.gameObject.SetActive(false);
 
         //enemyHp = enemyMaxHps[currentEnemyIndex];
         enemyHp = enemies[currentEnemyIndex].maxHp;
@@ -436,10 +443,64 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    void SetcardButtonText(Button button, CardData card)
+    void SetcardButtonText(Button button, CardInstance card)
     {
         TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
-        buttonText.text = card.cardName + "\n" + card.GetDescription();
+        buttonText.text = card.GetCardName() + "\n" + card.GetDescription();
+    }
+
+    public void UpgradeRandomCard()
+    {
+        List<CardInstance> allCards = new List<CardInstance>();
+
+        allCards.AddRange(deck);
+        allCards.AddRange(hand);
+        allCards.AddRange(discardPile);
+
+        List<CardInstance> upgradeableCards = new List<CardInstance>();
+
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            if (allCards[i].cardData.canUpgrade && allCards[i].isUpgraded == false)
+            {
+                upgradeableCards.Add(allCards[i]);
+            }
+        }
+
+        if(upgradeableCards.Count == 0)
+        {
+            AddLog("강화할 수 있는 카드가 없습니다");
+            return;
+        }
+
+        CardInstance selectedCard = upgradeableCards[Random.Range(0, upgradeableCards.Count)];
+
+        selectedCard.Upgrade();
+
+        AddLog(selectedCard.GetCardName() + " 강화 완료");
+        resultText.text = selectedCard.GetCardName() + " 강화 완료";
+
+        upgradeCardButton.gameObject.SetActive(false);
+
+        UpdateUI();
+    }
+
+    void SetRewardButtonText(Button button, CardData card)
+    {
+        TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
+
+        if (card.cardType == CardType.Attack)
+        {
+            buttonText.text = card.cardName + "\n" + card.damage + " 데미지";
+        }
+        else if (card.cardType == CardType.Heal)
+        {
+            buttonText.text = card.cardName + "\nHp " + card.heal + " 회복";
+        }
+        else if(card.cardType== CardType.Defense)
+        {
+            buttonText.text = card.cardName + "\n방어도 " + card.defense + " 획득";
+        }
     }
 
     void UpdateUI()
