@@ -55,9 +55,11 @@ public class BattleManager : MonoBehaviour
     List<CardData> hand = new List<CardData>();
     List<CardData> discardPile = new List<CardData>();
 
+    public Slider playerHpSlider;
+    public Slider enemyHpSlider;
 
-    //string[] enemyNames = { "슬라임", "고블린", "늑대", "보스" };
-    //int[] enemyMaxHps = { 50, 70, 90, 150 };
+    public int playerMaxHp = 100;
+
     public EnemyData[] enemies;
     int currentEnemyIndex = 0;
 
@@ -75,8 +77,13 @@ public class BattleManager : MonoBehaviour
         HideRewardButtons();
         nextStageButton.gameObject.SetActive(false);
 
-        //enemyHp = enemyMaxHps[currentEnemyIndex];
         enemyHp = enemies[currentEnemyIndex].maxHp;
+
+        playerHpSlider.maxValue = playerMaxHp;
+        playerHpSlider.value = playerHp;
+
+        enemyHpSlider.maxValue=enemies[currentEnemyIndex].maxHp;
+        enemyHpSlider.value = enemyHp;
 
         MakeDeck();
         ShuffleDeck();
@@ -119,9 +126,12 @@ public class BattleManager : MonoBehaviour
         rewardButton2.gameObject.SetActive(true);
         rewardButton3.gameObject.SetActive(true);
 
-        rewardButton1.GetComponentInChildren<TMP_Text>().text = rewardCard1.cardName;
-        rewardButton2.GetComponentInChildren<TMP_Text>().text = rewardCard2.cardName;
-        rewardButton3.GetComponentInChildren<TMP_Text>().text = rewardCard3.cardName;
+        //rewardButton1.GetComponentInChildren<TMP_Text>().text = rewardCard1.cardName;
+        //rewardButton2.GetComponentInChildren<TMP_Text>().text = rewardCard2.cardName;
+        //rewardButton3.GetComponentInChildren<TMP_Text>().text = rewardCard3.cardName;
+        SetcardButtonText(rewardButton1, rewardCard1);
+        SetcardButtonText(rewardButton2, rewardCard2);
+        SetcardButtonText(rewardButton3, rewardCard3);
     }
 
     CardData GetRandomRewardCard()
@@ -196,9 +206,12 @@ public class BattleManager : MonoBehaviour
         DrawOneCard();
         DrawOneCard();
 
-        cardButton1.GetComponentInChildren<TMP_Text>().text = hand[0].cardName;
-        cardButton2.GetComponentInChildren<TMP_Text>().text = hand[1].cardName;
-        cardButton3.GetComponentInChildren<TMP_Text>().text = hand[2].cardName;
+        //cardButton1.GetComponentInChildren<TMP_Text>().text = hand[0].cardName;
+        //cardButton2.GetComponentInChildren<TMP_Text>().text = hand[1].cardName;
+        //cardButton3.GetComponentInChildren<TMP_Text>().text = hand[2].cardName;
+        SetcardButtonText(cardButton1, hand[0]);
+        SetcardButtonText(cardButton2, hand[1]);
+        SetcardButtonText(cardButton3, hand[2]);
     }
 
     void DrawOneCard()
@@ -251,9 +264,9 @@ public class BattleManager : MonoBehaviour
 
             playerHp += card.heal;
 
-            if (playerHp > 100)
+            if (playerHp > playerMaxHp)
             {
-                playerHp = 100;
+                playerHp = playerMaxHp;
             }
 
             int actualHeal = playerHp - beforeHp;
@@ -391,6 +404,8 @@ public class BattleManager : MonoBehaviour
 
         //enemyHp = enemyMaxHps[currentEnemyIndex];
         enemyHp = enemies[currentEnemyIndex].maxHp;
+        enemyHpSlider.maxValue=enemies[currentEnemyIndex].maxHp;
+        enemyHpSlider.value = enemyHp;
         playerDefense = 0;
         bossTurnCount = 0;
 
@@ -419,6 +434,12 @@ public class BattleManager : MonoBehaviour
         {
             battleLogText.text += battleLogs[i] + "\n";
         }
+    }
+
+    void SetcardButtonText(Button button, CardData card)
+    {
+        TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
+        buttonText.text = card.cardName + "\n" + card.GetDescription();
     }
 
     void UpdateUI()
@@ -452,5 +473,17 @@ public class BattleManager : MonoBehaviour
 
         int totalCardCount = deck.Count + hand.Count + discardPile.Count;
         totalCardCountText.text = "전체 카드 : " + totalCardCount;
+
+        playerHpSlider.value = playerHp;
+
+        if (currentEnemyIndex < enemies.Length)
+        {
+            enemyHpSlider.maxValue = enemies[currentEnemyIndex].maxHp;
+            enemyHpSlider.value = enemyHp;
+        }
+        else
+        {
+            enemyHpSlider.value = 0;
+        }
     }
 }

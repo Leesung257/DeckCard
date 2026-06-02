@@ -15,4 +15,22 @@ public class CardData : ScriptableObject
     public int damage;
     public int heal;
     public int defense;
+
+    public string GetDescription()
+    {
+        if (cardType == CardType.Attack)
+        {
+            return damage + " µ¥¹ÌÁö";
+        }
+        else if (cardType == CardType.Heal)
+        {
+            return "HP " + heal + " È¸º¹";
+        }
+        else if (cardType == CardType.Defense) 
+        {
+            return "¹æ¾îµµ " + defense + " È¹µæ";
+        }
+
+        return "";
+    }
 }
