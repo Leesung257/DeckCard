@@ -21,9 +21,19 @@ public class BattleManager : MonoBehaviour
     public TMP_Text handCountText;
     public TMP_Text discardCountText;
 
+    public TMP_Text totalCardCountText;
+
     public Button cardButton1;
     public Button cardButton2;
     public Button cardButton3;
+
+    public Button rewardButton1;
+    public Button rewardButton2;
+    public Button rewardButton3;
+
+    private CardData rewardCard1;
+    private CardData rewardCard2;
+    private CardData rewardCard3;
 
     public CardData attackCard;
     public CardData strongAttackCard;
@@ -41,9 +51,13 @@ public class BattleManager : MonoBehaviour
 
     public int playerDefense = 0;
 
+    bool isChoosingReward = false;
+
     void Start()
-    {
+    { 
         resultText.text = "";
+
+        HideRewardButtons();
 
         enemyHp = enemyMaxHps[currentEnemyIndex];
 
@@ -66,6 +80,80 @@ public class BattleManager : MonoBehaviour
         deck.Add(healCard);
         deck.Add(defenseCard);
         deck.Add(defenseCard);
+    }
+
+    void HideRewardButtons()
+    {
+        isChoosingReward = false;
+
+        rewardButton1.gameObject.SetActive(false);
+        rewardButton2.gameObject.SetActive(false);
+        rewardButton3.gameObject.SetActive(false);
+    }
+
+    void ShowRewardButtons()
+    {
+        isChoosingReward = true;
+
+        rewardCard1 = GetRandomRewardCard();
+        rewardCard2 = GetRandomRewardCard();
+        rewardCard3 = GetRandomRewardCard();
+
+        rewardButton1.gameObject.SetActive(true);
+        rewardButton2.gameObject.SetActive(true);
+        rewardButton3.gameObject.SetActive(true);
+
+        rewardButton1.GetComponentInChildren<TMP_Text>().text = rewardCard1.cardName;
+        rewardButton2.GetComponentInChildren<TMP_Text>().text = rewardCard2.cardName;
+        rewardButton3.GetComponentInChildren<TMP_Text>().text = rewardCard3.cardName;
+    }
+
+    CardData GetRandomRewardCard()
+    {
+        int randomNumber = Random.Range(0, 4);
+
+        if (randomNumber == 0)
+        {
+            return attackCard;
+        }
+        else if (randomNumber == 1)
+        {
+            return strongAttackCard;
+        }
+        else if (randomNumber == 2)
+        {
+            return healCard;
+        }
+        else
+        {
+            return defenseCard;
+        }
+    }
+
+    public void SelectReward1()
+    {
+        SelectReward(rewardCard1);
+    }
+
+    public void SelectReward2()
+    {
+        SelectReward(rewardCard2);
+    }
+    public void SelectReward3()
+    {
+        SelectReward(rewardCard3);
+    }
+
+    void SelectReward(CardData selectCard)
+    {
+        discardPile.Add(selectCard);
+        
+        HideRewardButtons();
+
+        resultText.text = selectCard.cardName + " 획득";
+
+        //DrawCards();
+        UpdateUI();
     }
 
     void ShuffleDeck()
@@ -125,7 +213,7 @@ public class BattleManager : MonoBehaviour
 
     void UseCard(int handIndex)
     {
-        if (playerHp <= 0 || currentEnemyIndex >= enemyNames.Length)
+        if (playerHp <= 0 || currentEnemyIndex >= enemyNames.Length || isChoosingReward)
         {
             return;
         }
@@ -218,7 +306,9 @@ public class BattleManager : MonoBehaviour
             else
             {
                 enemyHp = enemyMaxHps[currentEnemyIndex];
-                resultText.text = enemyNames[currentEnemyIndex] + " 등장";
+                resultText.text = "카드 보상을 선택하세요";
+                ShowRewardButtons();
+                //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
             }
         }
     }
@@ -239,5 +329,8 @@ public class BattleManager : MonoBehaviour
             deckCountText.text = "덱 : " + deck.Count;
         handCountText.text = "손패 : " + hand.Count;
         discardCountText.text = "묘지 : " + discardPile.Count;
+
+        int totalCardCount = deck.Count + hand.Count + discardPile.Count;
+        totalCardCountText.text = "전체 카드 : " + totalCardCount;
     }
 }
