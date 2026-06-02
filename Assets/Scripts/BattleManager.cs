@@ -20,8 +20,11 @@ public class BattleManager : MonoBehaviour
     public TMP_Text deckCountText;
     public TMP_Text handCountText;
     public TMP_Text discardCountText;
-
     public TMP_Text totalCardCountText;
+
+    public TMP_Text stageText;
+
+    public TMP_Text enemyAttackText;
 
     public Button cardButton1;
     public Button cardButton2;
@@ -47,8 +50,9 @@ public class BattleManager : MonoBehaviour
     List<CardData> discardPile = new List<CardData>();
 
 
-    string[] enemyNames = { "슬라임", "고블린", "늑대" };
-    int[] enemyMaxHps = { 50, 70, 90 };
+    //string[] enemyNames = { "슬라임", "고블린", "늑대", "보스" };
+    //int[] enemyMaxHps = { 50, 70, 90, 150 };
+    public EnemyData[] enemies;
     int currentEnemyIndex = 0;
 
     public int playerDefense = 0;
@@ -62,8 +66,8 @@ public class BattleManager : MonoBehaviour
         HideRewardButtons();
         nextStageButton.gameObject.SetActive(false);
 
-        enemyHp = enemyMaxHps[currentEnemyIndex];
-
+        //enemyHp = enemyMaxHps[currentEnemyIndex];
+        enemyHp = enemies[currentEnemyIndex].maxHp;
 
         MakeDeck();
         ShuffleDeck();
@@ -219,7 +223,7 @@ public class BattleManager : MonoBehaviour
 
     void UseCard(int handIndex)
     {
-        if (playerHp <= 0 || currentEnemyIndex >= enemyNames.Length || isChoosingReward || enemyHp<=0 )
+        if (playerHp <= 0 || currentEnemyIndex >= enemies.Length || isChoosingReward || enemyHp<=0 )
         {
             return;
         }
@@ -248,12 +252,12 @@ public class BattleManager : MonoBehaviour
 
         CheckEnemyDead();
 
-        if (currentEnemyIndex<enemyNames.Length &&enemyHp > 0)
+        if (currentEnemyIndex<enemies.Length &&enemyHp > 0)
         {
             EnemyAttack();
         }
 
-        if (currentEnemyIndex < enemyNames.Length)
+        if (currentEnemyIndex < enemies.Length)
         {
             DrawCards();
 
@@ -274,7 +278,7 @@ public class BattleManager : MonoBehaviour
 
     void EnemyAttack()
     {
-        int enemyDamage = 5;
+        int enemyDamage = enemies[currentEnemyIndex].attackDamage;
 
         if (playerDefense > 0)
         {
@@ -304,10 +308,10 @@ public class BattleManager : MonoBehaviour
         {
             currentEnemyIndex++;
 
-            if (currentEnemyIndex >= enemyNames.Length)
+            if (currentEnemyIndex >= enemies.Length)
             {
                 enemyHp = 0;
-                resultText.text = "클리어";
+                resultText.text = "보스 처치! Game Clear";
             }
             else
             {
@@ -321,17 +325,19 @@ public class BattleManager : MonoBehaviour
 
     public void GoToNextStage()
     {
-        if(currentEnemyIndex>=enemyNames.Length)
+        if(currentEnemyIndex>=enemies.Length)
         {
             return;
         }
 
         nextStageButton.gameObject.SetActive(false);
 
-        enemyHp = enemyMaxHps[currentEnemyIndex];
+        //enemyHp = enemyMaxHps[currentEnemyIndex];
+        enemyHp = enemies[currentEnemyIndex].maxHp;
         playerDefense = 0;
 
-        resultText.text = enemyNames[currentEnemyIndex] + " 등장";
+        //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
+        resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
 
         DiscardHand();
         DrawCards();
@@ -340,19 +346,30 @@ public class BattleManager : MonoBehaviour
 
     void UpdateUI()
     {
+        if (currentEnemyIndex < enemies.Length)
+        {
+            stageText.text = "Stage" + (currentEnemyIndex + 1);
+        }
+        else
+        {
+            stageText.text = "Clear";
+        }
+
         playerHpText.text = "플레이어 HP : " + playerHp;
         playerDefenseText.text = "방어도 : " + playerDefense;
 
-        if (currentEnemyIndex < enemyNames.Length)
+        if (currentEnemyIndex < enemies.Length)
         {
-            enemyHpText.text = enemyNames[currentEnemyIndex] + " HP : " + enemyHp;
+            enemyHpText.text = enemies[currentEnemyIndex].enemyName + " HP : " + enemyHp;
+            enemyAttackText.text = "적 공격력 : " + enemies[currentEnemyIndex].attackDamage;
         }
         else
         {
             enemyHpText.text = "적 전멸";
+            enemyAttackText.text = "적 공격력 : 0";
         }
 
-            deckCountText.text = "덱 : " + deck.Count;
+        deckCountText.text = "덱 : " + deck.Count;
         handCountText.text = "손패 : " + hand.Count;
         discardCountText.text = "묘지 : " + discardPile.Count;
 
