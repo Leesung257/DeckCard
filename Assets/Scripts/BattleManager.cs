@@ -28,6 +28,10 @@ public class BattleManager : MonoBehaviour
 
     public TMP_Text enemyAttackText;
 
+    public TMP_Text battleLogText;
+    //string battleLog = "";
+    List<string> battleLogs = new List<string>();
+
     public Button cardButton1;
     public Button cardButton2;
     public Button cardButton3;
@@ -64,6 +68,9 @@ public class BattleManager : MonoBehaviour
     void Start()
     { 
         resultText.text = "";
+        //battleLog = "";
+        battleLogs.Clear();
+        battleLogText.text = "";
 
         HideRewardButtons();
         nextStageButton.gameObject.SetActive(false);
@@ -160,6 +167,7 @@ public class BattleManager : MonoBehaviour
         HideRewardButtons();
 
         resultText.text = selectCard.cardName + " 획득";
+        AddLog(selectCard.cardName + " 획득");
 
         nextStageButton.gameObject.SetActive(true);
 
@@ -235,19 +243,27 @@ public class BattleManager : MonoBehaviour
         if(card.cardType==CardType.Attack)
         {
             enemyHp -= card.damage;
+            AddLog(card.cardName + " 사용" + card.damage + " 데미지");
         }
         else if(card.cardType==CardType.Heal)
         {
+            int beforeHp = playerHp;
+
             playerHp += card.heal;
 
             if (playerHp > 100)
             {
                 playerHp = 100;
             }
+
+            int actualHeal = playerHp - beforeHp;
+
+            AddLog(card.cardName + " 사용 HP " + actualHeal + " 회복");
         }
         else if (card.cardType == CardType.Defense)
         {
             playerDefense += card.defense;
+            AddLog(card.cardName + " 사용! 방어도 " + card.defense + " 획득");
         }
 
             DiscardHand();
@@ -292,30 +308,52 @@ public class BattleManager : MonoBehaviour
             {
                 enemyDamage = Random.Range(currentEnemy.specialAttackDamage - 5,
                     currentEnemy.specialAttackDamage + 5);
-                resultText.text = currentEnemy.enemyName +
-                    "의 특수 공격(" + enemyDamage + " 데미지)";
+                AddLog(currentEnemy.enemyName + "의 특수 공격 " + enemyDamage + " 데미지");
+                resultText.text = (currentEnemy.enemyName + "의 특수 공격");
             }
+            else
+            {
+                AddLog(currentEnemy.enemyName + "의 일반 공격" + enemyDamage + " 데미지");
+            }
+        }
+        else
+        {
+            AddLog(currentEnemy.enemyName + "의 공격" + enemyDamage + " 데미지");
         }
 
         if (playerDefense > 0)
         {
+            int blockDamage = enemyDamage;
+
             playerDefense -= enemyDamage;
 
             if (playerDefense < 0)
             {
-                playerHp += playerDefense;
+                int remainDamage = -playerDefense;
+                blockDamage = enemyDamage - remainDamage;
+                playerHp -= remainDamage;
                 playerDefense = 0;
+
+                AddLog("방어도로 " + blockDamage + " 피해를 막음");
+                AddLog("플레이어가 " + remainDamage + " 피해를 받음");
+
+            }
+            else
+            {
+                AddLog("방어도로 " + blockDamage + " 피해를 막음");
             }
         }
         else
         {
             playerHp -= enemyDamage;
+            AddLog("플레이어가 " + enemyDamage + " 피해를 받음");
         }
 
         if (playerHp <= 0)
         {
             playerHp = 0;
             resultText.text = "패배...";
+            AddLog("플레이어 패배...");
         }
     }
 
@@ -347,6 +385,8 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        AddLog("Stage " + (currentEnemyIndex + 1) + " 시작" + enemies[currentEnemyIndex].enemyName);
+
         nextStageButton.gameObject.SetActive(false);
 
         //enemyHp = enemyMaxHps[currentEnemyIndex];
@@ -355,11 +395,30 @@ public class BattleManager : MonoBehaviour
         bossTurnCount = 0;
 
         //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
-        resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
+        //resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
 
         DiscardHand();
         DrawCards();
         UpdateUI();
+    }
+
+    void AddLog(string message)
+    {
+        //battleLog += message + "\n";
+        //battleLogText.text = battleLog;
+        battleLogs.Add(message);
+
+        if (battleLogs.Count > 5)
+        {
+            battleLogs.RemoveAt(0);
+        }
+
+        battleLogText.text = "";
+
+        for (int i = 0; i < battleLogs.Count; i++)
+        {
+            battleLogText.text += battleLogs[i] + "\n";
+        }
     }
 
     void UpdateUI()
