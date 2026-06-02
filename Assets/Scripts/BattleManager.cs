@@ -31,6 +31,8 @@ public class BattleManager : MonoBehaviour
     public Button rewardButton2;
     public Button rewardButton3;
 
+    public Button nextStageButton;
+
     private CardData rewardCard1;
     private CardData rewardCard2;
     private CardData rewardCard3;
@@ -58,6 +60,7 @@ public class BattleManager : MonoBehaviour
         resultText.text = "";
 
         HideRewardButtons();
+        nextStageButton.gameObject.SetActive(false);
 
         enemyHp = enemyMaxHps[currentEnemyIndex];
 
@@ -152,7 +155,10 @@ public class BattleManager : MonoBehaviour
 
         resultText.text = selectCard.cardName + " 획득";
 
-        //DrawCards();
+        nextStageButton.gameObject.SetActive(true);
+
+        DiscardHand();
+        DrawCards();
         UpdateUI();
     }
 
@@ -170,7 +176,7 @@ public class BattleManager : MonoBehaviour
 
     void DrawCards()
     {
-        hand.Clear();
+        //hand.Clear();
 
         DrawOneCard();
         DrawOneCard();
@@ -213,7 +219,7 @@ public class BattleManager : MonoBehaviour
 
     void UseCard(int handIndex)
     {
-        if (playerHp <= 0 || currentEnemyIndex >= enemyNames.Length || isChoosingReward)
+        if (playerHp <= 0 || currentEnemyIndex >= enemyNames.Length || isChoosingReward || enemyHp<=0 )
         {
             return;
         }
@@ -305,13 +311,33 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                enemyHp = enemyMaxHps[currentEnemyIndex];
+                enemyHp = 0;
                 resultText.text = "카드 보상을 선택하세요";
                 ShowRewardButtons();
                 //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
             }
         }
     }
+
+    public void GoToNextStage()
+    {
+        if(currentEnemyIndex>=enemyNames.Length)
+        {
+            return;
+        }
+
+        nextStageButton.gameObject.SetActive(false);
+
+        enemyHp = enemyMaxHps[currentEnemyIndex];
+        playerDefense = 0;
+
+        resultText.text = enemyNames[currentEnemyIndex] + " 등장";
+
+        DiscardHand();
+        DrawCards();
+        UpdateUI();
+    }
+
     void UpdateUI()
     {
         playerHpText.text = "플레이어 HP : " + playerHp;
