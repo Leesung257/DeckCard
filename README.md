@@ -127,14 +127,14 @@ CardData (ScriptableObject)
 - 강화 증가 수치
 
 CardInstance
-- CardDatd 참조
+- CardData 참조
 - 카드 강화 여부
 - 강화 적용 후 데미지
 - 강화 적용 후 회복량
 - 강화 적용 후 방어도
 - 카드 설명
 
-EnemyData (ScriptableObject
+EnemyData (ScriptableObject)
 - 적 이름
 - 최대 체력
 - 공격력
@@ -149,16 +149,13 @@ EnemyData (ScriptableObject
 
 ## 오류목록
 - Random 함수 유니티엔진, 시스템함수 충돌 오류 해결
-- ScripttableObject로 변경 후 데이터타입 오류
+- ScriptableObject로 변경 후 데이터타입 오류
 
 
 ## 구현 예정
 - 저장 기능
 - UI 개선
 - 카드 애니메이션
-- 로그 시스템
-- 코드 리팩토링
 - 카드 희귀도, 제거
 - 이벤트, 상점
-- 적 특수 행동
 
