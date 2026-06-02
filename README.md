@@ -150,7 +150,7 @@ EnemyData (ScriptableObject)
 ## 오류목록
 - Random 함수 유니티엔진, 시스템함수 충돌 오류 해결
 - ScriptableObject로 변경 후 데이터타입 오류
-
+- 강화 수치 중첩 문제
 
 ## 구현 예정
 - 저장 기능
