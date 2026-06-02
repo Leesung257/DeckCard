@@ -15,6 +15,7 @@ public class BattleManager : MonoBehaviour
     public TMP_Text playerHpText;
     public TMP_Text enemyHpText;
     public TMP_Text resultText;
+    public TMP_Text playerDefenseText;
 
     public TMP_Text deckCountText;
     public TMP_Text handCountText;
@@ -27,6 +28,7 @@ public class BattleManager : MonoBehaviour
     public CardData attackCard;
     public CardData strongAttackCard;
     public CardData healCard;
+    public CardData defenseCard;
 
     List<CardData> deck = new List<CardData>();
     List<CardData> hand = new List<CardData>();
@@ -36,6 +38,8 @@ public class BattleManager : MonoBehaviour
     string[] enemyNames = { "슬라임", "고블린", "늑대" };
     int[] enemyMaxHps = { 50, 70, 90 };
     int currentEnemyIndex = 0;
+
+    public int playerDefense = 0;
 
     void Start()
     {
@@ -60,6 +64,8 @@ public class BattleManager : MonoBehaviour
         deck.Add(attackCard);
         deck.Add(strongAttackCard);
         deck.Add(healCard);
+        deck.Add(defenseCard);
+        deck.Add(defenseCard);
     }
 
     void ShuffleDeck()
@@ -139,8 +145,12 @@ public class BattleManager : MonoBehaviour
                 playerHp = 100;
             }
         }
+        else if (card.cardType == CardType.Defense)
+        {
+            playerDefense += card.defense;
+        }
 
-        DiscardHand();
+            DiscardHand();
 
         CheckEnemyDead();
 
@@ -170,9 +180,24 @@ public class BattleManager : MonoBehaviour
 
     void EnemyAttack()
     {
-        playerHp -= 5;
+        int enemyDamage = 5;
 
-        if(playerHp<=0)
+        if (playerDefense > 0)
+        {
+            playerDefense -= enemyDamage;
+
+            if (playerDefense < 0)
+            {
+                playerHp += playerDefense;
+                playerDefense = 0;
+            }
+        }
+        else
+        {
+            playerHp -= enemyDamage;
+        }
+
+        if (playerHp <= 0)
         {
             playerHp = 0;
             resultText.text = "패배...";
@@ -200,6 +225,7 @@ public class BattleManager : MonoBehaviour
     void UpdateUI()
     {
         playerHpText.text = "플레이어 HP : " + playerHp;
+        playerDefenseText.text = "방어도 : " + playerDefense;
 
         if (currentEnemyIndex < enemyNames.Length)
         {
@@ -212,6 +238,6 @@ public class BattleManager : MonoBehaviour
 
             deckCountText.text = "덱 : " + deck.Count;
         handCountText.text = "손패 : " + hand.Count;
-        discardCountText.text = "버림더미 : " + discardPile.Count;
+        discardCountText.text = "묘지 : " + discardPile.Count;
     }
 }

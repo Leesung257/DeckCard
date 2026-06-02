@@ -3,7 +3,8 @@ using UnityEngine;
 public enum CardType
 {
     Attack,
-    Heal
+    Heal,
+    Defense
 }
 
 [CreateAssetMenu(fileName ="NewCardData", menuName ="Card/Card Data")]
@@ -13,4 +14,5 @@ public class CardData : ScriptableObject
     public CardType cardType;
     public int damage;
     public int heal;
+    public int defense;
 }

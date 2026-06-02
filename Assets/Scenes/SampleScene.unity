@@ -2173,6 +2173,9 @@ MonoBehaviour:
   cardButton1: {fileID: 1711028934}
   cardButton2: {fileID: 998769095}
   cardButton3: {fileID: 826969139}
+  attackCard: {fileID: 11400000, guid: ba9ef6a761309e44a8a8a93ff65d1319, type: 2}
+  strongAttackCard: {fileID: 11400000, guid: 8b12deabb69833146ab475c57de49dd3, type: 2}
+  healCard: {fileID: 11400000, guid: 3fbb1b5c243cf6d46903ba6b6f749719, type: 2}
 --- !u!4 &2132034799
 Transform:
   m_ObjectHideFlags: 0
