@@ -44,6 +44,14 @@ public class BattleManager : MonoBehaviour
 
     public Button upgradeCardButton;
 
+    public Button upgradeSelectButton1;
+    public Button upgradeSelectButton2;
+    public Button upgradeSelectButton3;
+
+    CardInstance upgradeCard1;
+    CardInstance upgradeCard2;
+    CardInstance upgradeCard3;
+
     private CardData rewardCard1;
     private CardData rewardCard2;
     private CardData rewardCard3;
@@ -81,6 +89,9 @@ public class BattleManager : MonoBehaviour
         HideRewardButtons();
         nextStageButton.gameObject.SetActive(false);
         upgradeCardButton.gameObject.SetActive(false);
+        upgradeSelectButton1.gameObject.SetActive(false);
+        upgradeSelectButton2.gameObject.SetActive(false);
+        upgradeSelectButton3.gameObject.SetActive(false);
 
         enemyHp = enemies[currentEnemyIndex].maxHp;
 
@@ -380,6 +391,8 @@ public class BattleManager : MonoBehaviour
     {
         if(enemyHp<=0)
         {
+            HideCardButtons();
+
             currentEnemyIndex++;
 
             if (currentEnemyIndex >= enemies.Length)
@@ -408,6 +421,8 @@ public class BattleManager : MonoBehaviour
 
         nextStageButton.gameObject.SetActive(false);
         upgradeCardButton.gameObject.SetActive(false);
+
+        ShowCardButtons();
 
         //enemyHp = enemyMaxHps[currentEnemyIndex];
         enemyHp = enemies[currentEnemyIndex].maxHp;
@@ -449,7 +464,7 @@ public class BattleManager : MonoBehaviour
         buttonText.text = card.GetCardName() + "\n" + card.GetDescription();
     }
 
-    public void UpgradeRandomCard()
+    /*public void UpgradeRandomCard()
     {
         List<CardInstance> allCards = new List<CardInstance>();
 
@@ -483,6 +498,84 @@ public class BattleManager : MonoBehaviour
         upgradeCardButton.gameObject.SetActive(false);
 
         UpdateUI();
+    }*/
+
+    public void ShowUpgradeChoices()
+    {
+        List<CardInstance> allCards = new List<CardInstance>();
+
+        allCards.AddRange(deck);
+        allCards.AddRange(hand);
+        allCards.AddRange(discardPile);
+
+        List<CardInstance> upgradeableCards = new List<CardInstance>();
+
+        for(int i = 0; i < allCards.Count; i++)
+        {
+            if (!allCards[i].isUpgraded)
+            {
+                upgradeableCards.Add(allCards[i]);
+            }
+        }
+
+        if(upgradeableCards.Count < 3)
+        {
+            return;
+        }
+
+        ShuffleUpgradeableCards(upgradeableCards);
+
+        upgradeCard1 = upgradeableCards[0];
+        upgradeCard2 = upgradeableCards[1];
+        upgradeCard3 = upgradeableCards[2];
+
+        SetcardButtonText(upgradeSelectButton1, upgradeCard1);
+        SetcardButtonText(upgradeSelectButton2, upgradeCard2);
+        SetcardButtonText(upgradeSelectButton3, upgradeCard3);
+
+        upgradeSelectButton1.gameObject.SetActive(true);
+        upgradeSelectButton2.gameObject.SetActive(true);
+        upgradeSelectButton3.gameObject.SetActive(true);
+    }
+
+    void ShuffleUpgradeableCards(List<CardInstance> cards)
+    {
+        for(int i=0;i<cards.Count;i++)
+        {
+            int randomIndex = Random.Range(i, cards.Count);
+
+            CardInstance temp = cards[i];
+            cards[i] = cards[randomIndex];
+            cards[randomIndex] = temp;
+        }
+    }
+
+    public void SelectUpgrade1()
+    {
+        UpgradeCard(upgradeCard1);
+    }
+
+    public void SelectUpgrade2()
+    {
+        UpgradeCard(upgradeCard2);
+    }
+
+    public void SelectUpgrade3()
+    {
+        UpgradeCard(upgradeCard3);
+    }
+
+    void UpgradeCard(CardInstance card)
+    {
+        card.Upgrade();
+
+        AddLog(card.GetCardName() + " °­È­");
+
+        upgradeSelectButton1.gameObject.SetActive(false);
+        upgradeSelectButton2.gameObject.SetActive(false);
+        upgradeSelectButton3.gameObject.SetActive(false);
+
+        UpdateUI();
     }
 
     void SetRewardButtonText(Button button, CardData card)
@@ -501,6 +594,20 @@ public class BattleManager : MonoBehaviour
         {
             buttonText.text = card.cardName + "\n¹æ¾îµµ " + card.defense + " È¹µæ";
         }
+    }
+
+    void ShowCardButtons()
+    {
+        cardButton1.gameObject.SetActive(true);
+        cardButton2.gameObject.SetActive(true);
+        cardButton3.gameObject.SetActive(true);
+    }
+
+    void HideCardButtons()
+    {
+        cardButton1.gameObject.SetActive(false);
+        cardButton2.gameObject.SetActive(false);
+        cardButton3.gameObject.SetActive(false);
     }
 
     void UpdateUI()
