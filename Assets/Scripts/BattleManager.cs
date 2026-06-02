@@ -12,6 +12,8 @@ public class BattleManager : MonoBehaviour
     public int playerHp = 100;
     public int enemyHp = 50;
 
+    private int bossTurnCount = 0;
+
     public TMP_Text playerHpText;
     public TMP_Text enemyHpText;
     public TMP_Text resultText;
@@ -161,8 +163,8 @@ public class BattleManager : MonoBehaviour
 
         nextStageButton.gameObject.SetActive(true);
 
-        DiscardHand();
-        DrawCards();
+        //DiscardHand();
+        //DrawCards();
         UpdateUI();
     }
 
@@ -278,7 +280,22 @@ public class BattleManager : MonoBehaviour
 
     void EnemyAttack()
     {
+        EnemyData currentEnemy = enemies[currentEnemyIndex];
+
         int enemyDamage = enemies[currentEnemyIndex].attackDamage;
+
+        if (currentEnemy.isBoss)
+        {
+            bossTurnCount++;
+
+            if (currentEnemy.specialAttackTurn > 0 && bossTurnCount % currentEnemy.specialAttackTurn == 0)
+            {
+                enemyDamage = Random.Range(currentEnemy.specialAttackDamage - 5,
+                    currentEnemy.specialAttackDamage + 5);
+                resultText.text = currentEnemy.enemyName +
+                    "의 특수 공격(" + enemyDamage + " 데미지)";
+            }
+        }
 
         if (playerDefense > 0)
         {
@@ -335,6 +352,7 @@ public class BattleManager : MonoBehaviour
         //enemyHp = enemyMaxHps[currentEnemyIndex];
         enemyHp = enemies[currentEnemyIndex].maxHp;
         playerDefense = 0;
+        bossTurnCount = 0;
 
         //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
         resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
