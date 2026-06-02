@@ -87,6 +87,19 @@ UI 시스템
 - HP Bar
 - 카드 설명 표시
 
+카드 강화 시스템
+- 카드 강화 기능 구현
+- 강화 시 이름에 +표시
+- 강화된 카드 효과 수치 증가
+- CardInstance 기반 개별로 카드 강화
+- CardData 원본 데이터와 실제 카드 상태 분리
+
+카드 구조 리팩토링
+- CardData는 원본 데이터만 관리
+- CardInstance는 실제 덱에 존재하는 카드 1장 관리
+- 카드별 강화 상태 개별 저장
+- 같은 종류의 카드라도 개별 강화
+
 ## 클래스 구조
 BattleManager
 - 전투진행
@@ -94,6 +107,7 @@ BattleManager
 - 적 관리
 - 보상 처리
 - 스테이지 진행
+- 카드 강화
 
 CardData (ScriptableObject)
 - 카드 이름
@@ -102,6 +116,15 @@ CardData (ScriptableObject)
 - 회복량
 - 방어도
 - 카드 설명 생성
+- 강화 증가 수치
+
+CardInstance
+- CardDatd 참조
+- 카드 강화 여부
+- 강화 적용 후 데미지
+- 강화 적용 후 회복량
+- 강화 적용 후 방어도
+- 카드 설명
 
 EnemyData (ScriptableObject
 - 적 이름
@@ -127,4 +150,7 @@ EnemyData (ScriptableObject
 - 카드 애니메이션
 - 로그 시스템
 - 코드 리팩토링
+- 카드 희귀도, 강화 선택, 제거
+- 이벤트, 상점
+- 적 특수 행동
 
