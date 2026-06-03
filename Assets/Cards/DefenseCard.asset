@@ -17,3 +17,7 @@ MonoBehaviour:
   damage: 0
   heal: 0
   defense: 10
+  canUpgrade: 1
+  upgradeDamage: 0
+  upgradeHeal: 0
+  upgradeDefense: 5

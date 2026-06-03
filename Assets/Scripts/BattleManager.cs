@@ -52,6 +52,16 @@ public class BattleManager : MonoBehaviour
     CardInstance upgradeCard2;
     CardInstance upgradeCard3;
 
+    public Button removeCardButton;
+
+    public Button removeSelectButton1;
+    public Button removeSelectButton2;
+    public Button removeSelectButton3;
+
+    CardInstance removeCard1;
+    CardInstance removeCard2;
+    CardInstance removeCard3;
+
     private CardData rewardCard1;
     private CardData rewardCard2;
     private CardData rewardCard3;
@@ -92,6 +102,10 @@ public class BattleManager : MonoBehaviour
         upgradeSelectButton1.gameObject.SetActive(false);
         upgradeSelectButton2.gameObject.SetActive(false);
         upgradeSelectButton3.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+        removeSelectButton1.gameObject.SetActive(false);
+        removeSelectButton2.gameObject.SetActive(false);
+        removeSelectButton3.gameObject.SetActive(false);
 
         enemyHp = enemies[currentEnemyIndex].maxHp;
 
@@ -197,6 +211,7 @@ public class BattleManager : MonoBehaviour
 
         nextStageButton.gameObject.SetActive(true);
         upgradeCardButton.gameObject.SetActive(true);
+        removeCardButton.gameObject.SetActive(true);
 
         //DiscardHand();
         //DrawCards();
@@ -421,6 +436,10 @@ public class BattleManager : MonoBehaviour
 
         nextStageButton.gameObject.SetActive(false);
         upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+        removeSelectButton1.gameObject.SetActive(false);
+        removeSelectButton2.gameObject.SetActive(false);
+        removeSelectButton3.gameObject.SetActive(false);
 
         ShowCardButtons();
 
@@ -520,6 +539,7 @@ public class BattleManager : MonoBehaviour
 
         if(upgradeableCards.Count < 3)
         {
+            Debug.Log("카드가 3장 미만이 불가");
             return;
         }
 
@@ -608,6 +628,74 @@ public class BattleManager : MonoBehaviour
         cardButton1.gameObject.SetActive(false);
         cardButton2.gameObject.SetActive(false);
         cardButton3.gameObject.SetActive(false);
+    }
+
+    public void ShowRemoveChoices()
+    {
+        Debug.Log("showRemoveshoice 실행");
+
+        List<CardInstance> allCards = new List<CardInstance>();
+
+        allCards.AddRange(deck);
+        allCards.AddRange(hand);
+        allCards.AddRange(discardPile);
+
+        Debug.Log("전체 카드수 : " + allCards.Count);
+
+        if (allCards.Count < 3)
+        {
+            Debug.Log("카드 부족해서 실패");
+            return;
+        }
+
+        ShuffleUpgradeableCards(allCards);
+
+        removeCard1 = allCards[0];
+        removeCard2 = allCards[1];
+        removeCard3 = allCards[2];
+
+        SetcardButtonText(removeSelectButton1, removeCard1);
+        SetcardButtonText(removeSelectButton2, removeCard2);
+        SetcardButtonText(removeSelectButton3, removeCard3);
+
+        removeSelectButton1.gameObject.SetActive(true);
+        removeSelectButton2.gameObject.SetActive(true);
+        removeSelectButton3.gameObject.SetActive(true);
+
+        Debug.Log("버튼1 상태 : " + removeSelectButton1.gameObject.activeSelf);
+        Debug.Log("버튼1 위치 : " + removeSelectButton1.transform.position);
+    }
+
+    public void SelectRemove1()
+    {
+        RemoveCard(removeCard1);
+    }
+
+    public void SelectRemove2()
+    {
+        RemoveCard(removeCard2);
+    }
+
+    public void SelectRemove3()
+    {
+        RemoveCard(removeCard3);
+    }
+
+    void RemoveCard(CardInstance card)
+    {
+        deck.Remove(card);
+        hand.Remove(card);
+        discardPile.Remove(card);
+
+        AddLog(card.GetCardName() + " 제거!");
+
+        removeSelectButton1.gameObject.SetActive(false);
+        removeSelectButton2.gameObject.SetActive(false);
+        removeSelectButton3.gameObject.SetActive(false);
+
+        removeCardButton.gameObject.SetActive(false);
+
+        UpdateUI();
     }
 
     void UpdateUI()

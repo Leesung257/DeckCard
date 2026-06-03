@@ -16,3 +16,8 @@ MonoBehaviour:
   cardType: 0
   damage: 20
   heal: 0
+  defense: 0
+  canUpgrade: 1
+  upgradeDamage: 10
+  upgradeHeal: 0
+  upgradeDefense: 0

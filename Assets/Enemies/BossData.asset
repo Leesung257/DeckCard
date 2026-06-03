@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbe1b118192327f4e9fd13fc633475ac, type: 3}
   m_Name: BossData
   m_EditorClassIdentifier: 
-  enemyName: 
-  maxHp: 0
-  attackDamage: 0
+  enemyName: "\uBCF4\uC2A4"
+  maxHp: 150
+  attackDamage: 18
+  isBoss: 1
+  specialAttackDamage: 35
+  specialAttackTurn: 3

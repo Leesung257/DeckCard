@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbe1b118192327f4e9fd13fc633475ac, type: 3}
   m_Name: OrkData
   m_EditorClassIdentifier: 
-  enemyName: 
-  maxHp: 0
-  attackDamage: 0
+  enemyName: "\uC624\uD06C"
+  maxHp: 90
+  attackDamage: 12
+  isBoss: 0
+  specialAttackDamage: 0
+  specialAttackTurn: 0
