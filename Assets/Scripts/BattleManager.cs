@@ -75,6 +75,10 @@ public class BattleManager : MonoBehaviour
     List<CardInstance> hand = new List<CardInstance>();
     List<CardInstance> discardPile = new List<CardInstance>();
 
+    public List<CardData> commonCards;
+    public List<CardData> rareCards;
+    public List<CardData> epicCards;
+
     public Slider playerHpSlider;
     public Slider enemyHpSlider;
 
@@ -168,23 +172,19 @@ public class BattleManager : MonoBehaviour
 
     CardData GetRandomRewardCard()
     {
-        int randomNumber = Random.Range(0, 4);
+        int randomNumber = Random.Range(0, 100);
 
-        if (randomNumber == 0)
+        if (randomNumber < 70)
         {
-            return attackCard;
+            return commonCards[Random.Range(0, commonCards.Count)];
         }
-        else if (randomNumber == 1)
+        else if (randomNumber < 95)
         {
-            return strongAttackCard;
-        }
-        else if (randomNumber == 2)
-        {
-            return healCard;
+            return rareCards[Random.Range(0, rareCards.Count)];
         }
         else
         {
-            return defenseCard;
+            return epicCards[Random.Range(0,epicCards.Count)];
         }
     }
 
@@ -488,7 +488,7 @@ public class BattleManager : MonoBehaviour
     void SetcardButtonText(Button button, CardInstance card)
     {
         TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
-        buttonText.text = card.GetCardName() + "\n" + card.GetDescription();
+        buttonText.text = card.GetRarityText() + "\n" + card.GetCardName() + "\n" + card.GetDescription();
     }
 
     /*public void UpgradeRandomCard()
@@ -621,18 +621,7 @@ public class BattleManager : MonoBehaviour
     {
         TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
 
-        if (card.cardType == CardType.Attack)
-        {
-            buttonText.text = card.cardName + "\n" + card.damage + " µ¥¹ÌÁö";
-        }
-        else if (card.cardType == CardType.Heal)
-        {
-            buttonText.text = card.cardName + "\nHp " + card.heal + " È¸º¹";
-        }
-        else if(card.cardType== CardType.Defense)
-        {
-            buttonText.text = card.cardName + "\n¹æ¾îµµ " + card.defense + " È¹µæ";
-        }
+        buttonText.text = "[" + card.rarity.ToString() + "]" + "\n" + card.cardName + "\n" + card.GetDescription();
     }
 
     void ShowCardButtons()

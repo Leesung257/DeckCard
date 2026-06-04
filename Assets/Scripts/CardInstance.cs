@@ -74,4 +74,9 @@ public class CardInstance
             isUpgraded = true;
         }
     }
+
+    public string GetRarityText()
+    {
+        return "[" + cardData.rarity.ToString() + "]";
+    }
 }
