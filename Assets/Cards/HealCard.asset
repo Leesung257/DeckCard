@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: "\uD68C\uBCF5 \uCE74\uB4DC"
   cardType: 1
+  rarity: 1
   damage: 0
   heal: 15
   defense: 0

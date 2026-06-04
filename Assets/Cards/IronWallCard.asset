@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3296cc5a0b074c24b9ba08ed6fbaccf6, type: 3}
-  m_Name: SpecialAttackCard
+  m_Name: IronWallCard
   m_EditorClassIdentifier: 
-  cardName: "\uC2A4\uD398\uC15C \uACF5\uACA9"
+  cardName: 
   cardType: 0
-  rarity: 2
-  damage: 40
+  rarity: 0
+  damage: 0
   heal: 0
   defense: 0
+  selfDamage: 0
+  multiHit: 0
+  hitcount: 0
   canUpgrade: 1
-  upgradeDamage: 15
+  upgradeDamage: 0
   upgradeHeal: 0
   upgradeDefense: 0

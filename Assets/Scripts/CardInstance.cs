@@ -51,20 +51,48 @@ public class CardInstance
 
     public string GetDescription()
     {
+        string description = "";
         if (cardData.cardType == CardType.Attack)
         {
-            return GetDamage() + " 데미지";
+            if (cardData.multiHit)
+            {
+                description += GetDamage() + " 데미지 x " + cardData.hitcount;
+            }
+            else
+            {
+                description += GetDamage() + " 데미지";
+            }
         }
-        else if(cardData.cardType == CardType.Heal)
+        if(GetHeal()>0)
         {
-            return "HP " + GetHeal() + " 회복";
+            if (description != "")
+            {
+                description += "\n";
+            }
+
+            description += "HP " + GetHeal() + " 회복";
         }
-        else if (cardData.cardType == CardType.Defense)
+        if (GetDefense() > 0)
         {
-            return "방어도 " + GetDefense() + "획득";
+            if (description != "")
+            {
+                description += "\n";
+            }
+
+            description += "방어도 " + GetDefense() + " 획득";
         }
 
-        return "";
+        if(cardData.selfDamage > 0)
+        {
+            if (description != "")
+            {
+                description += "\n";
+            }
+
+            description += "자신에게 " + cardData.selfDamage + " 피해";
+        }
+
+        return description;
     }
 
     public void Upgrade()

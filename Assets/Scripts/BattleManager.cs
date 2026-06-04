@@ -300,12 +300,29 @@ public class BattleManager : MonoBehaviour
 
         CardInstance card = hand[handIndex];
 
-        if(card.cardData.cardType==CardType.Attack)
+        int totalDamage = 0;
+
+        AddLog(card.GetCardName() + " 사용");
+
+        if (card.cardData.cardType == CardType.Attack)
         {
-            enemyHp -= card.GetDamage();
-            AddLog(card.GetCardName() + " 사용" + card.GetDamage() + " 데미지");
+            if (card.cardData.multiHit)
+            {
+                for (int i = 0; i < card.cardData.hitcount; i++)
+                {
+                    totalDamage += card.GetDamage();
+                }
+            }
+            else
+            {
+                totalDamage = card.GetDamage();
+            }
+
+            enemyHp -= totalDamage;
+
+            AddLog(totalDamage + " 데미지");
         }
-        else if(card.cardData.cardType==CardType.Heal)
+        if (card.GetHeal() > 0)
         {
             int beforeHp = playerHp;
 
@@ -318,19 +335,31 @@ public class BattleManager : MonoBehaviour
 
             int actualHeal = playerHp - beforeHp;
 
-            AddLog(card.GetCardName() + " 사용 HP " + actualHeal + " 회복");
+            AddLog(actualHeal + " Hp 회복");
         }
-        else if (card.cardData.cardType == CardType.Defense)
+        if (card.GetDefense() > 0)
         {
             playerDefense += card.GetDefense();
-            AddLog(card.GetCardName() + " 사용! 방어도 " + card.GetDefense() + " 획득");
+            AddLog(card.GetDefense() + "방어도 획득");
         }
 
-            DiscardHand();
+        if(card.cardData.selfDamage > 0)
+        {
+            playerHp -= card.cardData.selfDamage;
+
+            AddLog("자신에게" + card.cardData.selfDamage + " 피해");
+
+            if (playerHp < 0)
+            {
+                playerHp = 0;
+            }
+        }
+
+        DiscardHand();
 
         CheckEnemyDead();
 
-        if (currentEnemyIndex<enemies.Length &&enemyHp > 0)
+        if (currentEnemyIndex < enemies.Length && enemyHp > 0 && playerHp > 0)
         {
             EnemyAttack();
         }

@@ -18,6 +18,10 @@ public class CardData : ScriptableObject
     public int damage;
     public int heal;
     public int defense;
+    public int selfDamage;
+
+    public bool multiHit;
+    public int hitcount;
 
     public bool canUpgrade = true;
     public int upgradeDamage;
