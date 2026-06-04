@@ -14,6 +14,8 @@ public class BattleManager : MonoBehaviour
 
     private int bossTurnCount = 0;
 
+    public int eventChance = 50;
+
     public TMP_Text playerHpText;
     public TMP_Text enemyHpText;
     public TMP_Text resultText;
@@ -224,7 +226,7 @@ public class BattleManager : MonoBehaviour
         upgradeCardButton.gameObject.SetActive(false);
         removeCardButton.gameObject.SetActive(false);
 
-        ShowEventButtons();
+        DecideNextAfterReward();
 
         //DiscardHand();
         //DrawCards();
@@ -797,6 +799,22 @@ public class BattleManager : MonoBehaviour
 
         resultText.text = "이벤트 완료";
         UpdateUI();
+    }
+
+    void DecideNextAfterReward()
+    {
+        int randomValue=Random.Range(0, 100);
+
+        if(randomValue < eventChance)
+        {
+            ShowEventButtons();
+        }
+        else
+        {
+            nextStageButton.gameObject.SetActive(true);
+            resultText.text = "다음 스테이지 입장하세요";
+            AddLog("이벤트 없이 다음 스테이지 진행");
+        }
     }
 
     void UpdateUI()
