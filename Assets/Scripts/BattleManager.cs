@@ -89,6 +89,8 @@ public class BattleManager : MonoBehaviour
 
     CardData selectUpgradeCard;
 
+    bool usedDeckAction = false;
+
     void Start()
     { 
         resultText.text = "";
@@ -205,6 +207,8 @@ public class BattleManager : MonoBehaviour
         discardPile.Add(new CardInstance(selectCard));
         
         HideRewardButtons();
+
+        usedDeckAction = false;
 
         resultText.text = selectCard.cardName + " 획득";
         AddLog(selectCard.cardName + " 획득");
@@ -453,6 +457,10 @@ public class BattleManager : MonoBehaviour
         //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
         //resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
 
+        usedDeckAction = false;
+        upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+
         DiscardHand();
         DrawCards();
         UpdateUI();
@@ -521,6 +529,12 @@ public class BattleManager : MonoBehaviour
 
     public void ShowUpgradeChoices()
     {
+        if (usedDeckAction)
+        {
+            AddLog("이미 강화 또는 제거를 진행했습니다.");
+            return;
+        }
+
         List<CardInstance> allCards = new List<CardInstance>();
 
         allCards.AddRange(deck);
@@ -589,11 +603,16 @@ public class BattleManager : MonoBehaviour
     {
         card.Upgrade();
 
+        usedDeckAction = true;
+
         AddLog(card.GetCardName() + " 강화");
 
         upgradeSelectButton1.gameObject.SetActive(false);
         upgradeSelectButton2.gameObject.SetActive(false);
         upgradeSelectButton3.gameObject.SetActive(false);
+
+        upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
 
         UpdateUI();
     }
@@ -632,6 +651,12 @@ public class BattleManager : MonoBehaviour
 
     public void ShowRemoveChoices()
     {
+        if (usedDeckAction)
+        {
+            AddLog("이미 강화 또는 삭제를 진행했습니다");
+            return;
+        }
+
         Debug.Log("showRemoveshoice 실행");
 
         List<CardInstance> allCards = new List<CardInstance>();
@@ -687,6 +712,8 @@ public class BattleManager : MonoBehaviour
         hand.Remove(card);
         discardPile.Remove(card);
 
+        usedDeckAction = true;
+
         AddLog(card.GetCardName() + " 제거!");
 
         removeSelectButton1.gameObject.SetActive(false);
@@ -694,6 +721,7 @@ public class BattleManager : MonoBehaviour
         removeSelectButton3.gameObject.SetActive(false);
 
         removeCardButton.gameObject.SetActive(false);
+        upgradeCardButton.gameObject.SetActive(false);
 
         UpdateUI();
     }

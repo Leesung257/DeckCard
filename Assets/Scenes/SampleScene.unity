@@ -176,10 +176,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\uC81C\uAC703"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2cbf462327d00814d9ef94a75929d5eb, type: 2}
+  m_sharedMaterial: {fileID: 3427662453797185342, guid: 2cbf462327d00814d9ef94a75929d5eb, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1650,8 +1650,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -208, y: 1.2}
-  m_SizeDelta: {x: 180, y: 80}
+  m_AnchoredPosition: {x: -208, y: 9.399998}
+  m_SizeDelta: {x: 180, y: 81.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &622939831
 MonoBehaviour:
@@ -1783,7 +1783,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 26.199997}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &650516079
@@ -2182,7 +2182,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -208, y: 0}
+  m_AnchoredPosition: {x: -208, y: 1.2}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &735769260
@@ -4728,10 +4728,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\uC81C\uAC702"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2cbf462327d00814d9ef94a75929d5eb, type: 2}
+  m_sharedMaterial: {fileID: 3427662453797185342, guid: 2cbf462327d00814d9ef94a75929d5eb, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5854,10 +5854,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\uC81C\uAC701"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2cbf462327d00814d9ef94a75929d5eb, type: 2}
+  m_sharedMaterial: {fileID: 3427662453797185342, guid: 2cbf462327d00814d9ef94a75929d5eb, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6803,10 +6803,10 @@ MonoBehaviour:
   upgradeSelectButton1: {fileID: 622939833}
   upgradeSelectButton2: {fileID: 438255974}
   upgradeSelectButton3: {fileID: 1866113845}
-  removeCardButton: {fileID: 0}
-  removeSelectButton1: {fileID: 0}
-  removeSelectButton2: {fileID: 0}
-  removeSelectButton3: {fileID: 0}
+  removeCardButton: {fileID: 650516079}
+  removeSelectButton1: {fileID: 735769260}
+  removeSelectButton2: {fileID: 1976974595}
+  removeSelectButton3: {fileID: 1109401459}
   attackCard: {fileID: 11400000, guid: ba9ef6a761309e44a8a8a93ff65d1319, type: 2}
   strongAttackCard: {fileID: 11400000, guid: 8b12deabb69833146ab475c57de49dd3, type: 2}
   healCard: {fileID: 11400000, guid: 3fbb1b5c243cf6d46903ba6b6f749719, type: 2}
