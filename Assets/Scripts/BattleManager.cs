@@ -66,6 +66,12 @@ public class BattleManager : MonoBehaviour
     private CardData rewardCard2;
     private CardData rewardCard3;
 
+    public Button eventHealButton;
+    public Button eventUpgradeButton;
+    public Button eventRemoveButton;
+
+    bool isEventStage = false;
+
     public CardData attackCard;
     public CardData strongAttackCard;
     public CardData healCard;
@@ -112,6 +118,7 @@ public class BattleManager : MonoBehaviour
         removeSelectButton1.gameObject.SetActive(false);
         removeSelectButton2.gameObject.SetActive(false);
         removeSelectButton3.gameObject.SetActive(false);
+        HideEventButtons();
 
         enemyHp = enemies[currentEnemyIndex].maxHp;
 
@@ -213,9 +220,11 @@ public class BattleManager : MonoBehaviour
         resultText.text = selectCard.cardName + " 획득";
         AddLog(selectCard.cardName + " 획득");
 
-        nextStageButton.gameObject.SetActive(true);
-        upgradeCardButton.gameObject.SetActive(true);
-        removeCardButton.gameObject.SetActive(true);
+        nextStageButton.gameObject.SetActive(false);
+        upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+
+        ShowEventButtons();
 
         //DiscardHand();
         //DrawCards();
@@ -431,6 +440,9 @@ public class BattleManager : MonoBehaviour
 
     public void GoToNextStage()
     {
+        isEventStage = false;
+        HideEventButtons();
+
         if(currentEnemyIndex>=enemies.Length)
         {
             return;
@@ -614,6 +626,11 @@ public class BattleManager : MonoBehaviour
         upgradeCardButton.gameObject.SetActive(false);
         removeCardButton.gameObject.SetActive(false);
 
+        if(isEventStage)
+        {
+            EndEventStage();
+        }
+
         UpdateUI();
     }
 
@@ -712,6 +729,73 @@ public class BattleManager : MonoBehaviour
         removeCardButton.gameObject.SetActive(false);
         upgradeCardButton.gameObject.SetActive(false);
 
+        if (isEventStage)
+        {
+            EndEventStage();
+        }
+
+        UpdateUI();
+    }
+
+    void HideEventButtons()
+    {
+        eventHealButton.gameObject.SetActive(false);
+        eventRemoveButton.gameObject.SetActive(false);
+        eventUpgradeButton.gameObject.SetActive(false);
+    }
+
+    void ShowEventButtons()
+    {
+        isEventStage = true;
+
+        eventHealButton.gameObject.SetActive(true);
+        eventRemoveButton.gameObject.SetActive(true);
+        eventUpgradeButton.gameObject.SetActive(true);
+
+        cardButton1.gameObject.SetActive(false);
+        cardButton2.gameObject.SetActive(false);
+        cardButton3.gameObject.SetActive(false);
+
+        resultText.text = "이벤트를 선택하세요";
+        AddLog("이벤트 스테이지 진입");
+    }
+
+    public void EventHeal()
+    {
+        playerHp += 20;
+
+        if (playerHp > playerMaxHp)
+        {
+            playerHp = playerMaxHp;
+        }
+
+        AddLog("이벤트 : HP 20 회복");
+        EndEventStage();
+    }
+
+    public void EventUpgrade()
+    {
+        AddLog("이벤트 : 카드 강화 선택");
+        HideEventButtons();
+        ShowUpgradeChoices();
+    }
+
+    public void EventRemove()
+    {
+        AddLog("이벤트 : 카드 제거 선택");
+        HideEventButtons();
+        ShowRemoveChoices();
+    }
+
+    void EndEventStage()
+    {
+        isEventStage = false;
+
+        HideEventButtons();
+
+        nextStageButton.gameObject.SetActive(true);
+
+        resultText.text = "이벤트 완료";
         UpdateUI();
     }
 
