@@ -101,6 +101,9 @@ UI 시스템
 - HP Bar
 - 카드 설명 표시
 - 카드 강화 선택 UI
+- 카드 제거 UI
+- 카드 제거 선택 UI
+- 카드 설명에 희귀도 표시
 
 카드 강화 시스템
 - 카드 강화 기능 구현
@@ -115,6 +118,10 @@ UI 시스템
 - 원하는 카드 선택 강화
 - 이미 강화된 카드 제외
 - 강화 후보 카드 랜덤
+
+카드 희귀도 시스템
+- 희귀도 종류 설정 (Common, Rare, Epic)
+- 보상 카드 등장 시 희귀도 확률 적용
 
 카드 구조 리팩토링
 - CardData는 원본 데이터만 관리
@@ -147,6 +154,7 @@ CardInstance
 - 강화 적용 후 회복량
 - 강화 적용 후 방어도
 - 카드 설명
+- 희귀도 설정
 
 EnemyData (ScriptableObject)
 - 적 이름
@@ -155,6 +163,9 @@ EnemyData (ScriptableObject)
 - 보스 여부
 - 특수 공격 데미지
 - 특수 공격 주기
+
+CardRarity Enum
+- Common, Rare, Epic
 
 ## 사용기술
 - Unity
