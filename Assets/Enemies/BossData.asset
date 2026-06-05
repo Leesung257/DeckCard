@@ -20,3 +20,5 @@ MonoBehaviour:
   specialAttackTurn: 3
   actions:
   - {fileID: 11400000, guid: dfb351aba96c0c04ca04cd9de77fbb9c, type: 2}
+  - {fileID: 11400000, guid: 7a0cbaf1d435db743b3639eb2525d185, type: 2}
+  - {fileID: 11400000, guid: 22a5810c8a5cbd94d8971abe9aa4bef8, type: 2}

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ca27f433deb923418e0996b3c83418a, type: 3}
   m_Name: BossDefense
   m_EditorClassIdentifier: 
-  actionName: 
-  actionType: 0
+  actionName: "\uBCF4\uC2A4 \uBC29\uC5B4"
+  actionType: 2
   damage: 0
   hitCount: 0
-  defense: 0
+  defense: 15
   ignoreDefense: 0
   chance: 0

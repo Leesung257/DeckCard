@@ -31,6 +31,9 @@ public class BattleManager : MonoBehaviour
     public TMP_Text enemyAttackText;
 
     public TMP_Text battleLogText;
+
+    public TMP_Text goldText;
+
     //string battleLog = "";
     List<string> battleLogs = new List<string>();
 
@@ -110,6 +113,11 @@ public class BattleManager : MonoBehaviour
 
     private bool isNextBossSpecialAttack = false;
 
+    public int gold = 0;
+
+    public GameObject shopPanel;
+    public int shopChance = 30;
+
     void Start()
     { 
         resultText.text = "";
@@ -128,6 +136,7 @@ public class BattleManager : MonoBehaviour
         removeSelectButton2.gameObject.SetActive(false);
         removeSelectButton3.gameObject.SetActive(false);
         HideEventButtons();
+        shopPanel.SetActive(false);
 
         enemyHp = enemies[currentEnemyIndex].maxHp;
 
@@ -235,7 +244,7 @@ public class BattleManager : MonoBehaviour
         upgradeCardButton.gameObject.SetActive(false);
         removeCardButton.gameObject.SetActive(false);
 
-        DecideNextAfterReward();
+        DecideShopAfterReward();
 
         //DiscardHand();
         //DrawCards();
@@ -468,6 +477,8 @@ public class BattleManager : MonoBehaviour
             nextEnemyAction = null;
             isNextBossSpecialAttack = false;
 
+            int rewardGold = Random.Range(15, 26);
+
             currentEnemyIndex++;
 
             if (currentEnemyIndex >= enemies.Length)
@@ -478,6 +489,8 @@ public class BattleManager : MonoBehaviour
             else
             {
                 enemyHp = 0;
+                gold += rewardGold;
+                AddLog(rewardGold + " 골드 획득");
                 resultText.text = "카드 보상을 선택하세요";
                 ShowRewardButtons();
                 //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
@@ -1021,6 +1034,80 @@ public class BattleManager : MonoBehaviour
         resultText.text = "다음 행동 : " + nextEnemyAction.actionName;
     }
 
+    void ShowShop()
+    {
+        shopPanel.SetActive(true);
+
+        HideCardButtons();
+        HideEventButtons();
+
+        nextStageButton.gameObject.SetActive(false);
+        upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+
+        resultText.text = "상점에 입장했습니다";
+        AddLog("상점 등장");
+    }
+
+    public void ExitShop()
+    {
+        shopPanel.SetActive(false);
+
+        resultText.text = "상점을 나왔습니다.";
+        AddLog("상점 종료");
+
+        DecideNextAfterReward();
+    }
+
+    void DecideShopAfterReward()
+    {
+        int randomValue = Random.Range(0, 100);
+
+        if(randomValue < shopChance)
+        {
+            ShowShop();
+        }
+        else
+        {
+            DecideNextAfterReward();
+        }
+    }
+
+    void BuyCard(CardData cardData, int price)
+    {
+        if (gold < price)
+        {
+            AddLog("골드가 부족합니다");
+            return;
+        }
+
+        gold -= price;
+
+        discardPile.Add(new CardInstance(cardData));
+
+        AddLog(cardData.cardName + " 구매");
+        AddLog(price + " 골드 사용");
+
+        UpdateUI();
+    }
+
+    public void BuyAttackCard()
+    {
+        BuyCard(attackCard, 30);
+    }
+    public void BuyStrongAttackCard()
+    {
+        BuyCard(strongAttackCard, 50);
+    }
+    public void BuyDefenseCard()
+    {
+        BuyCard(defenseCard, 25);
+    }
+    public void BuyHealCard()
+    {
+        BuyCard(healCard, 25);
+    }
+
     void UpdateUI()
     {
         if (currentEnemyIndex < enemies.Length)
@@ -1052,6 +1139,8 @@ public class BattleManager : MonoBehaviour
 
         int totalCardCount = deck.Count + hand.Count + discardPile.Count;
         totalCardCountText.text = "전체 카드 : " + totalCardCount;
+
+        goldText.text = "Gold : " + gold;
 
         playerHpSlider.value = playerHp;
 

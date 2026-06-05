@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: "\uC5F0\uC18D \uACF5\uACA9"
   cardType: 0
   rarity: 0
-  damage: 5
+  damage: 7
   heal: 0
   defense: 0
   selfDamage: 0
