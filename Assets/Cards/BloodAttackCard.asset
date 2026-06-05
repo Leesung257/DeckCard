@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3296cc5a0b074c24b9ba08ed6fbaccf6, type: 3}
   m_Name: BloodAttackCard
   m_EditorClassIdentifier: 
-  cardName: 
+  cardName: "\uD761\uD608 \uACF5\uACA9"
   cardType: 0
-  rarity: 0
-  damage: 0
-  heal: 0
+  rarity: 1
+  damage: 10
+  heal: 5
   defense: 0
   selfDamage: 0
   multiHit: 0
   hitcount: 0
   canUpgrade: 1
-  upgradeDamage: 0
-  upgradeHeal: 0
+  upgradeDamage: 5
+  upgradeHeal: 3
   upgradeDefense: 0

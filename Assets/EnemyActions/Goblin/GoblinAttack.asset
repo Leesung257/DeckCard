@@ -9,19 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3296cc5a0b074c24b9ba08ed6fbaccf6, type: 3}
-  m_Name: MultiAttackCard
+  m_Script: {fileID: 11500000, guid: 3ca27f433deb923418e0996b3c83418a, type: 3}
+  m_Name: GoblinAttack
   m_EditorClassIdentifier: 
-  cardName: "\uC5F0\uC18D \uACF5\uACA9"
-  cardType: 0
-  rarity: 0
-  damage: 5
-  heal: 0
+  actionName: "\uACE0\uBE14\uB9B0 \uACF5\uACA9"
+  actionType: 0
+  damage: 8
+  hitCount: 0
   defense: 0
-  selfDamage: 0
-  multiHit: 1
-  hitcount: 2
-  canUpgrade: 1
-  upgradeDamage: 2
-  upgradeHeal: 0
-  upgradeDefense: 0
+  ignoreDefense: 0
+  chance: 50

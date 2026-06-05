@@ -96,12 +96,15 @@ public class BattleManager : MonoBehaviour
     int currentEnemyIndex = 0;
 
     public int playerDefense = 0;
+    public int enemyDefense = 0;
 
     bool isChoosingReward = false;
 
     CardData selectUpgradeCard;
 
     bool usedDeckAction = false;
+
+    private int enemyAttackBonus = 0;
 
     void Start()
     { 
@@ -318,7 +321,7 @@ public class BattleManager : MonoBehaviour
                 totalDamage = card.GetDamage();
             }
 
-            enemyHp -= totalDamage;
+            DealDamageToEnemy(totalDamage);
 
             AddLog(totalDamage + " 데미지");
         }
@@ -383,11 +386,37 @@ public class BattleManager : MonoBehaviour
         hand.Clear();
     }
 
+    void DealDamageToEnemy(int damage)
+    {
+        if (enemyDefense > 0)
+        {
+            enemyDefense -= damage;
+
+            if(enemyDefense < 0)
+            {
+                int remainDamage = -enemyDefense;
+
+                enemyDefense = 0;
+
+                enemyHp -= remainDamage;
+
+                AddLog("적 방어도 파괴");
+                AddLog(remainDamage + " 피해");
+            }
+            else
+            {
+                AddLog("적 방어로 피해를 막음");
+            }
+        }
+        else
+        {
+            enemyHp -= damage;
+        }
+    }
+
     void EnemyAttack()
     {
         EnemyData currentEnemy = enemies[currentEnemyIndex];
-
-        int enemyDamage = enemies[currentEnemyIndex].attackDamage;
 
         if (currentEnemy.isBoss)
         {
@@ -395,55 +424,25 @@ public class BattleManager : MonoBehaviour
 
             if (currentEnemy.specialAttackTurn > 0 && bossTurnCount % currentEnemy.specialAttackTurn == 0)
             {
-                enemyDamage = Random.Range(currentEnemy.specialAttackDamage - 5,
-                    currentEnemy.specialAttackDamage + 5);
-                AddLog(currentEnemy.enemyName + "의 특수 공격 " + enemyDamage + " 데미지");
-                resultText.text = (currentEnemy.enemyName + "의 특수 공격");
-            }
-            else
-            {
-                AddLog(currentEnemy.enemyName + "의 일반 공격" + enemyDamage + " 데미지");
-            }
-        }
-        else
-        {
-            AddLog(currentEnemy.enemyName + "의 공격" + enemyDamage + " 데미지");
-        }
+                int specialDamage = Random.Range(currentEnemy.specialAttackDamage - 5, currentEnemy.specialAttackDamage + 5);
 
-        if (playerDefense > 0)
-        {
-            int blockDamage = enemyDamage;
+                specialDamage += enemyAttackBonus;
 
-            playerDefense -= enemyDamage;
+                AddLog(currentEnemy.enemyName + "의 특수 공격" + specialDamage + " 데미지");
+                resultText.text = currentEnemy.enemyName + "의 특수 공격";
 
-            if (playerDefense < 0)
-            {
-                int remainDamage = -playerDefense;
-                blockDamage = enemyDamage - remainDamage;
-                playerHp -= remainDamage;
-                playerDefense = 0;
+                EnemyAttackDamage(specialDamage);
+                UpdateUI();
 
-                AddLog("방어도로 " + blockDamage + " 피해를 막음");
-                AddLog("플레이어가 " + remainDamage + " 피해를 받음");
-
-            }
-            else
-            {
-                AddLog("방어도로 " + blockDamage + " 피해를 막음");
+                return;
             }
         }
-        else
-        {
-            playerHp -= enemyDamage;
-            AddLog("플레이어가 " + enemyDamage + " 피해를 받음");
-        }
+        EnemyActionData action = GetRandomEnemyAction(currentEnemy);
 
-        if (playerHp <= 0)
-        {
-            playerHp = 0;
-            resultText.text = "패배...";
-            AddLog("플레이어 패배...");
-        }
+        ExecuteEnemyAction(action);
+        UpdateUI();
+
+        return;
     }
 
     void CheckEnemyDead()
@@ -451,6 +450,9 @@ public class BattleManager : MonoBehaviour
         if(enemyHp<=0)
         {
             HideCardButtons();
+
+            enemyDefense = 0;
+            enemyAttackBonus = 0;
 
             currentEnemyIndex++;
 
@@ -496,6 +498,8 @@ public class BattleManager : MonoBehaviour
         enemyHpSlider.value = enemyHp;
         playerDefense = 0;
         bossTurnCount = 0;
+        enemyDefense = 0;
+        enemyAttackBonus = 0;
 
         //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
         //resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
@@ -846,6 +850,129 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    EnemyActionData GetRandomEnemyAction(EnemyData enemy)
+    {
+        int totalChance = 0;
+
+        for(int i = 0; i < enemy.actions.Count; i++)
+        {
+            totalChance += enemy.actions[i].chance;
+        }
+
+        int randomValue = Random.Range(0, totalChance);
+
+        int currentChance = 0;
+
+        for(int i = 0;i < enemy.actions.Count; i++)
+        {
+            currentChance += enemy.actions[i].chance;
+
+            if (randomValue < currentChance)
+            {
+                return enemy.actions[i];
+            }
+        }
+
+        return enemy.actions[0];
+    }
+
+    void ExecuteEnemyAction(EnemyActionData action)
+    {
+        if (action.actionType == EnemyActionType.Attack)
+        {
+            int damage = action.damage + enemyAttackBonus;
+
+            AddLog(action.actionName);
+            EnemyAttackDamage(damage);
+        }
+        else if (action.actionType == EnemyActionType.Defense)
+        {
+            enemyDefense += action.defense;
+
+            AddLog(action.actionName);
+            AddLog("적 방어도 " + action.defense + " 증가");
+        }
+        else if (action.actionType == EnemyActionType.MultiAttack)
+        {
+            int totalDamage = 0;
+
+            for(int i = 0; i < action.hitCount; i++)
+            {
+                totalDamage += action.damage + enemyAttackBonus;
+            }
+
+            AddLog(action.actionName);
+
+            EnemyAttackDamage(totalDamage);
+        }
+        else if (action.actionType == EnemyActionType.IgnoreDefenseAttack)
+        {
+            int ignoreAmount = action.ignoreDefense;
+
+            if (ignoreAmount > playerDefense)
+            {
+                ignoreAmount = playerDefense;
+            }
+
+            playerDefense -= ignoreAmount;
+            playerHp -= ignoreAmount;
+
+            AddLog(action.actionName);
+            AddLog("방어도 " + ignoreAmount + " 무시");
+
+            int damage = action.damage + enemyAttackBonus;
+
+            EnemyAttackDamage(damage);
+        }
+        else if (action.actionType == EnemyActionType.AttackBuff)
+        {
+            enemyAttackBonus += 5;
+
+            AddLog(action.actionName);
+            AddLog("적 공격력 5 증가");
+        }
+    }
+
+    void EnemyAttackDamage(int enemyDamage)
+    {
+        if (playerDefense > 0)
+        {
+            int blockDamage = enemyDamage;
+
+            playerDefense -= enemyDamage;
+
+            if(playerDefense < 0)
+            {
+                int remainDamage = -playerDefense;
+
+                blockDamage = enemyDamage - remainDamage;
+                playerHp-= remainDamage;
+                playerDefense = 0;
+
+                AddLog("방어도로 " + blockDamage + " 피해를 막음");
+                AddLog("플레이어가 " + remainDamage + " 피해를 막음");
+            }
+            else
+            {
+                AddLog("방어도로 " + blockDamage + " 피해를 막음");
+            }
+        }
+        else
+        {
+            playerHp -= enemyDamage;
+
+            AddLog("플레이어가 " + enemyDamage + " 피해를 받음");
+        }
+
+        if (playerHp <= 0)
+        {
+            playerHp = 0;
+
+            resultText.text = "패배...";
+            AddLog("플레이어 패배...");
+        }
+    }
+
     void UpdateUI()
     {
         if (currentEnemyIndex < enemies.Length)
@@ -862,7 +989,7 @@ public class BattleManager : MonoBehaviour
 
         if (currentEnemyIndex < enemies.Length)
         {
-            enemyHpText.text = enemies[currentEnemyIndex].enemyName + " HP : " + enemyHp;
+            enemyHpText.text = enemies[currentEnemyIndex].enemyName + " HP : " + enemyHp + " / 방어도 : " + enemyDefense;
             enemyAttackText.text = "적 공격력 : " + enemies[currentEnemyIndex].attackDamage;
         }
         else

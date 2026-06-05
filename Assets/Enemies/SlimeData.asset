@@ -18,3 +18,6 @@ MonoBehaviour:
   isBoss: 0
   specialAttackDamage: 0
   specialAttackTurn: 0
+  actions:
+  - {fileID: 11400000, guid: ba7f8d25baaf2de4681b09d1b8604ab1, type: 2}
+  - {fileID: 11400000, guid: 5adc4b11d0e222d4783a69bd646d4301, type: 2}

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbe1b118192327f4e9fd13fc633475ac, type: 3}
-  m_Name: GoblinData
+  m_Name: OrcData
   m_EditorClassIdentifier: 
-  enemyName: "\uACE0\uBE14\uB9B0"
-  maxHp: 70
-  attackDamage: 8
+  enemyName: "\uC624\uD06C"
+  maxHp: 90
+  attackDamage: 12
   isBoss: 0
   specialAttackDamage: 0
   specialAttackTurn: 0
   actions:
-  - {fileID: 11400000, guid: 87cfdaae3797299499e0ffb3e85a75b4, type: 2}
-  - {fileID: 11400000, guid: dce33c4e1f2ba5b4d85b90e5e1396fe9, type: 2}
-  - {fileID: 11400000, guid: b6d3b907810f6764eb56cec0f96d41e0, type: 2}
+  - {fileID: 11400000, guid: e448ddbe80c833f408b6e50599826c05, type: 2}
+  - {fileID: 11400000, guid: 6e0945f5f360a7840bf3012090bfe79b, type: 2}
+  - {fileID: 11400000, guid: 186468bc08cf93d458291d3033c429d1, type: 2}
