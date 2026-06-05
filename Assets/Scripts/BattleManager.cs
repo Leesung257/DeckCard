@@ -106,6 +106,10 @@ public class BattleManager : MonoBehaviour
 
     private int enemyAttackBonus = 0;
 
+    private EnemyActionData nextEnemyAction;
+
+    private bool isNextBossSpecialAttack = false;
+
     void Start()
     { 
         resultText.text = "";
@@ -136,6 +140,8 @@ public class BattleManager : MonoBehaviour
         MakeDeck();
         ShuffleDeck();
         DrawCards();
+
+        DecideNextEnemyAction();
 
         UpdateUI();
     }
@@ -421,25 +427,31 @@ public class BattleManager : MonoBehaviour
         if (currentEnemy.isBoss)
         {
             bossTurnCount++;
-
-            if (currentEnemy.specialAttackTurn > 0 && bossTurnCount % currentEnemy.specialAttackTurn == 0)
-            {
-                int specialDamage = Random.Range(currentEnemy.specialAttackDamage - 5, currentEnemy.specialAttackDamage + 5);
-
-                specialDamage += enemyAttackBonus;
-
-                AddLog(currentEnemy.enemyName + "의 특수 공격" + specialDamage + " 데미지");
-                resultText.text = currentEnemy.enemyName + "의 특수 공격";
-
-                EnemyAttackDamage(specialDamage);
-                UpdateUI();
-
-                return;
-            }
         }
-        EnemyActionData action = GetRandomEnemyAction(currentEnemy);
 
-        ExecuteEnemyAction(action);
+        if (isNextBossSpecialAttack)
+        {
+            int specialDamage = Random.Range(currentEnemy.specialAttackDamage - 5, currentEnemy.specialAttackDamage + 5);
+
+            specialDamage += enemyAttackBonus;
+
+            AddLog(currentEnemy.enemyName + "의 특수 공격" + specialDamage + " 데미지");
+            resultText.text = currentEnemy.enemyName + "의 특수 공격";
+
+            EnemyAttackDamage(specialDamage);
+            DecideNextEnemyAction();
+            UpdateUI();
+
+            return;
+        }
+        //EnemyActionData action = GetRandomEnemyAction(currentEnemy);
+        if (nextEnemyAction != null)
+        {
+            ExecuteEnemyAction(nextEnemyAction);
+        }
+
+        DecideNextEnemyAction();
+
         UpdateUI();
 
         return;
@@ -453,6 +465,8 @@ public class BattleManager : MonoBehaviour
 
             enemyDefense = 0;
             enemyAttackBonus = 0;
+            nextEnemyAction = null;
+            isNextBossSpecialAttack = false;
 
             currentEnemyIndex++;
 
@@ -510,6 +524,9 @@ public class BattleManager : MonoBehaviour
 
         DiscardHand();
         DrawCards();
+
+        DecideNextEnemyAction();
+
         UpdateUI();
     }
 
@@ -971,6 +988,37 @@ public class BattleManager : MonoBehaviour
             resultText.text = "패배...";
             AddLog("플레이어 패배...");
         }
+    }
+
+    void DecideNextEnemyAction()
+    {
+        if (currentEnemyIndex >= enemies.Length)
+        {
+            return;
+        }
+
+        EnemyData currentEnemy = enemies[currentEnemyIndex];
+
+        isNextBossSpecialAttack = false;
+        nextEnemyAction = null;
+
+        if (currentEnemy.isBoss)
+        {
+            int nextBossturn = bossTurnCount + 1;
+
+            if (currentEnemy.specialAttackTurn > 0 && nextBossturn % currentEnemy.specialAttackTurn == 0)
+            {
+                isNextBossSpecialAttack = true;
+
+                resultText.text = "다음 행동 : " + currentEnemy.enemyName + " 특수 공격(" + currentEnemy.specialAttackDamage + ")";
+
+                return;
+            }
+        }
+
+        nextEnemyAction = GetRandomEnemyAction(currentEnemy);
+
+        resultText.text = "다음 행동 : " + nextEnemyAction.actionName;
     }
 
     void UpdateUI()
