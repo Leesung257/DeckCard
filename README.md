@@ -2,10 +2,13 @@
 Unity로 제작한 덱빌딩 기반의 카드 전투게임
 
 # 프로젝트 소개
-플레이어는 다양한 카드를 사용하여 적을 처치하며 스테이지를 진행
-전투를 이기면 카드 보상을 획득하고 덱에 추가하여 보스를 처치하는 것이 목표.
-ScriptObject를 활용하여 데이터 관리
-CardInstance 구조를 통해 카드 개별 강화 시스템을 구현
+DeckCard는 Unity로 제작한 덱빌딩 기반의 턴제 카드 게임입니다.
+
+플레이어는 카드를 활용하여 적을 처치하고 스테이지를 진행하며, 전투 승리 후 획득한
+카드 보상과 상점 시스템을 통해 덱을 성장시킬 수 있습니다.
+
+ScriptableObject 기반 데이터 구조와 CardData / CardInstance 분리를 통해
+카드 데이터 관리와 개별 카드 강화 시스템을 구현했습니다.
 
 ## 주요 기능
 # 전투 시스템
@@ -162,8 +165,6 @@ CardInstance 구조를 통해 카드 개별 강화 시스템을 구현
 - 상점 구매 애니메이션 적용
 
 ## UI 시스템
-- 플레이어 HP Bar
-- 적 HP Bar
 - 스테이지 표시
 - 적 공격력 표시
 - 전체 카드 수 표시
@@ -215,7 +216,7 @@ CardInstance 구조를 통해 카드 개별 강화 시스템을 구현
 - 특수 공격 주기
 - 적 행동 리스트
 
-# EnemyActionDta (ScriptableObject)
+# EnemyActionData (ScriptableObject)
 - 행동 이름
 - 행동 타입
 - 데미지
@@ -329,3 +330,5 @@ CardInstance 구조를 통해 카드 개별 강화 시스템을 구현
 ### 저장 / 불러오기
 
 ![저장 GIF](Gif/save_load.gif)
+
+
