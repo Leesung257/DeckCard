@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using System.IO;
+using System.Collections;
 
 public class BattleManager : MonoBehaviour
 {
@@ -111,6 +112,11 @@ public class BattleManager : MonoBehaviour
     public GameObject shopPanel;
     public int shopChance = 30;
 
+    public Button shopAttackCardButton;
+    public Button shopDefenseCardButton;
+    public Button shopStrongAttackButton;
+    public Button shopHealCardButton;
+
 
     void Start()
     { 
@@ -196,16 +202,16 @@ public class BattleManager : MonoBehaviour
 
     public void SelectReward1()
     {
-        SelectReward(rewardCard1);
+        StartCoroutine(PlayCardAnimation(rewardButton1, () => SelectReward(rewardCard1)));
     }
 
     public void SelectReward2()
     {
-        SelectReward(rewardCard2);
+        StartCoroutine(PlayCardAnimation(rewardButton2, () => SelectReward(rewardCard2)));
     }
     public void SelectReward3()
     {
-        SelectReward(rewardCard3);
+        StartCoroutine(PlayCardAnimation(rewardButton3, () => SelectReward(rewardCard3)));
     }
 
     void SelectReward(CardData selectCard)
@@ -268,17 +274,17 @@ public class BattleManager : MonoBehaviour
 
     public void UseCard1()
     {
-        UseCard(0);
+        StartCoroutine(PlayCardAnimation(cardButton1, () => UseCard(0)));
     }
 
     public void UseCard2()
     {
-        UseCard(1);
+        StartCoroutine(PlayCardAnimation(cardButton2, () => UseCard(1)));
     }
 
     public void UseCard3()
     {
-        UseCard(2);
+        StartCoroutine(PlayCardAnimation(cardButton3, () => UseCard(2)));
     }
 
     void UseCard(int handIndex)
@@ -596,17 +602,17 @@ public class BattleManager : MonoBehaviour
 
     public void SelectUpgrade1()
     {
-        UpgradeCard(upgradeCard1);
+        StartCoroutine(PlayCardAnimation(upgradeSelectButton1, () => UpgradeCard(upgradeCard1)));
     }
 
     public void SelectUpgrade2()
     {
-        UpgradeCard(upgradeCard2);
+        StartCoroutine(PlayCardAnimation(upgradeSelectButton2, () => UpgradeCard(upgradeCard2)));
     }
 
     public void SelectUpgrade3()
     {
-        UpgradeCard(upgradeCard3);
+        StartCoroutine(PlayCardAnimation(upgradeSelectButton3, () => UpgradeCard(upgradeCard3)));
     }
 
     void UpgradeCard(CardInstance card)
@@ -692,17 +698,17 @@ public class BattleManager : MonoBehaviour
 
     public void SelectRemove1()
     {
-        RemoveCard(removeCard1);
+        StartCoroutine(PlayCardAnimation(removeSelectButton1, () => RemoveCard(removeCard1)));
     }
 
     public void SelectRemove2()
     {
-        RemoveCard(removeCard2);
+        StartCoroutine(PlayCardAnimation(removeSelectButton2, () => RemoveCard(removeCard2)));
     }
 
     public void SelectRemove3()
     {
-        RemoveCard(removeCard3);
+        StartCoroutine(PlayCardAnimation(removeSelectButton3, () => RemoveCard(removeCard3)));
     }
 
     void RemoveCard(CardInstance card)
@@ -1016,19 +1022,19 @@ public class BattleManager : MonoBehaviour
 
     public void BuyAttackCard()
     {
-        BuyCard(attackCard, 30);
+        StartCoroutine(PlayCardAnimation(shopAttackCardButton, () => BuyCard(attackCard, 30)));
     }
     public void BuyStrongAttackCard()
     {
-        BuyCard(strongAttackCard, 50);
+        StartCoroutine(PlayCardAnimation(shopStrongAttackButton, () => BuyCard(strongAttackCard, 50)));
     }
     public void BuyDefenseCard()
     {
-        BuyCard(defenseCard, 25);
+        StartCoroutine(PlayCardAnimation(shopDefenseCardButton, () => BuyCard(defenseCard, 25)));
     }
     public void BuyHealCard()
     {
-        BuyCard(healCard, 25);
+        StartCoroutine(PlayCardAnimation(shopHealCardButton, () => BuyCard(healCard, 25)));
     }
 
     public void SaveGame()
@@ -1168,6 +1174,19 @@ public class BattleManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    IEnumerator PlayCardAnimation(Button button, System.Action action)
+    {
+        Vector3 originalScale = button.transform.localScale;
+
+        button.transform.localScale = originalScale * 1.2f;
+
+        yield return new WaitForSeconds(0.15f);
+
+        button.transform.localScale = originalScale;
+
+        action?.Invoke();
     }
 
     void HideEnemyText()
