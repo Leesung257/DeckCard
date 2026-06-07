@@ -1,12 +1,9 @@
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using System.IO;
-using UnityEngine.Experimental.AI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -36,7 +33,6 @@ public class BattleManager : MonoBehaviour
 
     public TMP_Text goldText;
 
-    //string battleLog = "";
     List<string> battleLogs = new List<string>();
 
     public Button cardButton1;
@@ -92,9 +88,6 @@ public class BattleManager : MonoBehaviour
     public List<CardData> rareCards;
     public List<CardData> epicCards;
 
-    public Slider playerHpSlider;
-    public Slider enemyHpSlider;
-
     public int playerMaxHp = 100;
 
     public EnemyData[] enemies;
@@ -104,8 +97,6 @@ public class BattleManager : MonoBehaviour
     public int enemyDefense = 0;
 
     bool isChoosingReward = false;
-
-    CardData selectUpgradeCard;
 
     bool usedDeckAction = false;
 
@@ -124,30 +115,18 @@ public class BattleManager : MonoBehaviour
     void Start()
     { 
         resultText.text = "";
-        //battleLog = "";
         battleLogs.Clear();
         battleLogText.text = "";
 
         HideRewardButtons();
         nextStageButton.gameObject.SetActive(false);
-        upgradeCardButton.gameObject.SetActive(false);
-        upgradeSelectButton1.gameObject.SetActive(false);
-        upgradeSelectButton2.gameObject.SetActive(false);
-        upgradeSelectButton3.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
-        removeSelectButton1.gameObject.SetActive(false);
-        removeSelectButton2.gameObject.SetActive(false);
-        removeSelectButton3.gameObject.SetActive(false);
+        HideDeckActionButtons();
+        HideUpgradeSelectButtons();
+        HideRemoveSelectButtons();
         HideEventButtons();
         shopPanel.SetActive(false);
 
         enemyHp = enemies[currentEnemyIndex].maxHp;
-
-        playerHpSlider.maxValue = playerMaxHp;
-        playerHpSlider.value = playerHp;
-
-        enemyHpSlider.maxValue=enemies[currentEnemyIndex].maxHp;
-        enemyHpSlider.value = enemyHp;
 
         MakeDeck();
         ShuffleDeck();
@@ -192,9 +171,6 @@ public class BattleManager : MonoBehaviour
         rewardButton2.gameObject.SetActive(true);
         rewardButton3.gameObject.SetActive(true);
 
-        //rewardButton1.GetComponentInChildren<TMP_Text>().text = rewardCard1.cardName;
-        //rewardButton2.GetComponentInChildren<TMP_Text>().text = rewardCard2.cardName;
-        //rewardButton3.GetComponentInChildren<TMP_Text>().text = rewardCard3.cardName;
         SetRewardButtonText(rewardButton1, rewardCard1);
         SetRewardButtonText(rewardButton2, rewardCard2);
         SetRewardButtonText(rewardButton3, rewardCard3);
@@ -244,13 +220,10 @@ public class BattleManager : MonoBehaviour
         AddLog(selectCard.cardName + " 획득");
 
         nextStageButton.gameObject.SetActive(false);
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
+        HideDeckActionButtons();
 
         DecideShopAfterReward();
 
-        //DiscardHand();
-        //DrawCards();
         UpdateUI();
     }
 
@@ -268,15 +241,11 @@ public class BattleManager : MonoBehaviour
 
     void DrawCards()
     {
-        //hand.Clear();
 
         DrawOneCard();
         DrawOneCard();
         DrawOneCard();
 
-        //cardButton1.GetComponentInChildren<TMP_Text>().text = hand[0].cardName;
-        //cardButton2.GetComponentInChildren<TMP_Text>().text = hand[1].cardName;
-        //cardButton3.GetComponentInChildren<TMP_Text>().text = hand[2].cardName;
         SetcardButtonText(cardButton1, hand[0]);
         SetcardButtonText(cardButton2, hand[1]);
         SetcardButtonText(cardButton3, hand[2]);
@@ -456,7 +425,7 @@ public class BattleManager : MonoBehaviour
 
             return;
         }
-        //EnemyActionData action = GetRandomEnemyAction(currentEnemy);
+
         if (nextEnemyAction != null)
         {
             ExecuteEnemyAction(nextEnemyAction);
@@ -487,6 +456,9 @@ public class BattleManager : MonoBehaviour
             if (currentEnemyIndex >= enemies.Length)
             {
                 enemyHp = 0;
+
+                HideEnemyText();
+
                 resultText.text = "보스 처치! Game Clear";
             }
             else
@@ -494,9 +466,12 @@ public class BattleManager : MonoBehaviour
                 enemyHp = 0;
                 gold += rewardGold;
                 AddLog(rewardGold + " 골드 획득");
+
+                HideEnemyText();
+
                 resultText.text = "카드 보상을 선택하세요";
                 ShowRewardButtons();
-                //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
+                
             }
         }
     }
@@ -514,29 +489,24 @@ public class BattleManager : MonoBehaviour
         AddLog("Stage " + (currentEnemyIndex + 1) + " 시작" + enemies[currentEnemyIndex].enemyName);
 
         nextStageButton.gameObject.SetActive(false);
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
-        removeSelectButton1.gameObject.SetActive(false);
-        removeSelectButton2.gameObject.SetActive(false);
-        removeSelectButton3.gameObject.SetActive(false);
+        HideDeckActionButtons();
+        HideRemoveSelectButtons();
 
         ShowCardButtons();
+        ShowEnemyText();
+        resultText.gameObject.SetActive(true);
 
-        //enemyHp = enemyMaxHps[currentEnemyIndex];
+
+
         enemyHp = enemies[currentEnemyIndex].maxHp;
-        enemyHpSlider.maxValue=enemies[currentEnemyIndex].maxHp;
-        enemyHpSlider.value = enemyHp;
         playerDefense = 0;
         bossTurnCount = 0;
         enemyDefense = 0;
         enemyAttackBonus = 0;
 
-        //resultText.text = enemyNames[currentEnemyIndex] + " 등장";
-        //resultText.text = enemies[currentEnemyIndex].enemyName + " 등장";
 
         usedDeckAction = false;
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
+        HideDeckActionButtons();
 
         DiscardHand();
         DrawCards();
@@ -548,8 +518,6 @@ public class BattleManager : MonoBehaviour
 
     void AddLog(string message)
     {
-        //battleLog += message + "\n";
-        //battleLogText.text = battleLog;
         battleLogs.Add(message);
 
         if (battleLogs.Count > 5)
@@ -570,42 +538,6 @@ public class BattleManager : MonoBehaviour
         TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
         buttonText.text = card.GetRarityText() + "\n" + card.GetCardName() + "\n" + card.GetDescription();
     }
-
-    /*public void UpgradeRandomCard()
-    {
-        List<CardInstance> allCards = new List<CardInstance>();
-
-        allCards.AddRange(deck);
-        allCards.AddRange(hand);
-        allCards.AddRange(discardPile);
-
-        List<CardInstance> upgradeableCards = new List<CardInstance>();
-
-        for (int i = 0; i < allCards.Count; i++)
-        {
-            if (allCards[i].cardData.canUpgrade && allCards[i].isUpgraded == false)
-            {
-                upgradeableCards.Add(allCards[i]);
-            }
-        }
-
-        if(upgradeableCards.Count == 0)
-        {
-            AddLog("강화할 수 있는 카드가 없습니다");
-            return;
-        }
-
-        CardInstance selectedCard = upgradeableCards[Random.Range(0, upgradeableCards.Count)];
-
-        selectedCard.Upgrade();
-
-        AddLog(selectedCard.GetCardName() + " 강화 완료");
-        resultText.text = selectedCard.GetCardName() + " 강화 완료";
-
-        upgradeCardButton.gameObject.SetActive(false);
-
-        UpdateUI();
-    }*/
 
     public void ShowUpgradeChoices()
     {
@@ -647,9 +579,7 @@ public class BattleManager : MonoBehaviour
         SetcardButtonText(upgradeSelectButton2, upgradeCard2);
         SetcardButtonText(upgradeSelectButton3, upgradeCard3);
 
-        upgradeSelectButton1.gameObject.SetActive(true);
-        upgradeSelectButton2.gameObject.SetActive(true);
-        upgradeSelectButton3.gameObject.SetActive(true);
+        ShowUpgradeSelectButtons();
     }
 
     void ShuffleUpgradeableCards(List<CardInstance> cards)
@@ -687,12 +617,9 @@ public class BattleManager : MonoBehaviour
 
         AddLog(card.GetCardName() + " 강화");
 
-        upgradeSelectButton1.gameObject.SetActive(false);
-        upgradeSelectButton2.gameObject.SetActive(false);
-        upgradeSelectButton3.gameObject.SetActive(false);
+        HideUpgradeSelectButtons();
 
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
+        HideDeckActionButtons();
 
         if(isEventStage)
         {
@@ -757,9 +684,7 @@ public class BattleManager : MonoBehaviour
         SetcardButtonText(removeSelectButton2, removeCard2);
         SetcardButtonText(removeSelectButton3, removeCard3);
 
-        removeSelectButton1.gameObject.SetActive(true);
-        removeSelectButton2.gameObject.SetActive(true);
-        removeSelectButton3.gameObject.SetActive(true);
+        ShowRemoveSelectButtons();
 
         Debug.Log("버튼1 상태 : " + removeSelectButton1.gameObject.activeSelf);
         Debug.Log("버튼1 위치 : " + removeSelectButton1.transform.position);
@@ -790,12 +715,9 @@ public class BattleManager : MonoBehaviour
 
         AddLog(card.GetCardName() + " 제거!");
 
-        removeSelectButton1.gameObject.SetActive(false);
-        removeSelectButton2.gameObject.SetActive(false);
-        removeSelectButton3.gameObject.SetActive(false);
+        HideRemoveSelectButtons();
 
-        removeCardButton.gameObject.SetActive(false);
-        upgradeCardButton.gameObject.SetActive(false);
+        HideDeckActionButtons();
 
         if (isEventStage)
         {
@@ -820,9 +742,7 @@ public class BattleManager : MonoBehaviour
         eventRemoveButton.gameObject.SetActive(true);
         eventUpgradeButton.gameObject.SetActive(true);
 
-        cardButton1.gameObject.SetActive(false);
-        cardButton2.gameObject.SetActive(false);
-        cardButton3.gameObject.SetActive(false);
+        HideCardButtons();
 
         resultText.text = "이벤트를 선택하세요";
         AddLog("이벤트 스테이지 진입");
@@ -959,10 +879,10 @@ public class BattleManager : MonoBehaviour
         }
         else if (action.actionType == EnemyActionType.AttackBuff)
         {
-            enemyAttackBonus += 5;
+            enemyAttackBonus += 3;
 
             AddLog(action.actionName);
-            AddLog("적 공격력 5 증가");
+            AddLog("적 공격력 3 증가");
         }
     }
 
@@ -983,7 +903,7 @@ public class BattleManager : MonoBehaviour
                 playerDefense = 0;
 
                 AddLog("방어도로 " + blockDamage + " 피해를 막음");
-                AddLog("플레이어가 " + remainDamage + " 피해를 막음");
+                AddLog("플레이어가 " + remainDamage + " 피해를 받음");
             }
             else
             {
@@ -1043,10 +963,10 @@ public class BattleManager : MonoBehaviour
 
         HideCardButtons();
         HideEventButtons();
+        resultText.gameObject.SetActive(false);
 
         nextStageButton.gameObject.SetActive(false);
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
+        HideDeckActionButtons();
 
         resultText.text = "상점에 입장했습니다";
         AddLog("상점 등장");
@@ -1119,35 +1039,9 @@ public class BattleManager : MonoBehaviour
         saveData.playerHp = playerHp;
         saveData.currentStage = currentEnemyIndex+1;
 
-        foreach(CardInstance card in deck)
-        {
-            CardSaveData cardSaveData = new CardSaveData();
-
-            cardSaveData.cardName = card.cardData.cardName;
-            cardSaveData.isUpgraded = card.isUpgraded;
-
-            saveData.cards.Add(cardSaveData);
-        }
-
-        foreach(CardInstance card in hand)
-        {
-            CardSaveData cardSaveData = new CardSaveData();
-
-            cardSaveData.cardName = card.cardData.cardName;
-            cardSaveData.isUpgraded = card.isUpgraded;
-
-            saveData.cards.Add(cardSaveData);
-        }
-
-        foreach(CardInstance card in discardPile)
-        {
-            CardSaveData cardSaveData = new CardSaveData();
-
-            cardSaveData.cardName = card.cardData.cardName;
-            cardSaveData.isUpgraded = card.isUpgraded;
-
-            saveData.cards.Add(cardSaveData);
-        }
+        AddCardToSaveData(deck, saveData);
+        AddCardToSaveData(hand, saveData);
+        AddCardToSaveData(discardPile, saveData);
 
         string json = JsonUtility.ToJson(saveData, true);
 
@@ -1159,6 +1053,19 @@ public class BattleManager : MonoBehaviour
         File.WriteAllText(path, json);
 
         AddLog("게임 저장 완료");
+    }
+
+    void AddCardToSaveData(List<CardInstance> cards, SaveData saveData)
+    {
+        foreach(CardInstance card in cards)
+        {
+            CardSaveData cardSaveData=new CardSaveData();
+
+            cardSaveData.cardName = card.cardData.cardName;
+            cardSaveData.isUpgraded = card.isUpgraded;
+
+            saveData.cards.Add(cardSaveData);
+        }
     }
 
     public void LoadGame()
@@ -1263,6 +1170,52 @@ public class BattleManager : MonoBehaviour
         return null;
     }
 
+    void HideEnemyText()
+    {
+        enemyHpText.gameObject.SetActive(false);
+        enemyAttackText.gameObject.SetActive(false);
+    }
+
+    void ShowEnemyText()
+    {
+        enemyHpText.gameObject.SetActive(true);
+        enemyAttackText.gameObject.SetActive(true);
+    }
+
+    void HideUpgradeSelectButtons()
+    {
+        upgradeSelectButton1.gameObject.SetActive(false);
+        upgradeSelectButton2.gameObject.SetActive(false);
+        upgradeSelectButton3.gameObject.SetActive(false);
+    }
+
+    void ShowUpgradeSelectButtons()
+    {
+        upgradeSelectButton1.gameObject.SetActive(true);
+        upgradeSelectButton2.gameObject.SetActive(true);
+        upgradeSelectButton3.gameObject.SetActive(true);
+    }
+
+    void HideRemoveSelectButtons()
+    {
+        removeSelectButton1.gameObject.SetActive(false);
+        removeSelectButton2.gameObject.SetActive(false);
+        removeSelectButton3.gameObject.SetActive(false);
+    }
+
+    void ShowRemoveSelectButtons()
+    {
+        removeSelectButton1.gameObject.SetActive(true);
+        removeSelectButton2.gameObject.SetActive(true);
+        removeSelectButton3.gameObject.SetActive(true);
+    }
+
+    void HideDeckActionButtons()
+    {
+        upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+    }
+
     void UpdateUI()
     {
         if (currentEnemyIndex < enemies.Length)
@@ -1296,17 +1249,5 @@ public class BattleManager : MonoBehaviour
         totalCardCountText.text = "전체 카드 : " + totalCardCount;
 
         goldText.text = "Gold : " + gold;
-
-        playerHpSlider.value = playerHp;
-
-        if (currentEnemyIndex < enemies.Length)
-        {
-            enemyHpSlider.maxValue = enemies[currentEnemyIndex].maxHp;
-            enemyHpSlider.value = enemyHp;
-        }
-        else
-        {
-            enemyHpSlider.value = 0;
-        }
     }
 }
