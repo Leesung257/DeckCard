@@ -957,7 +957,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 228606148}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2132034798}
+        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+        m_MethodName: BuyStrongAttackCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &228606148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3523,7 +3535,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 798122161}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2132034798}
+        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+        m_MethodName: BuyDefenseCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &798122161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5953,7 +5977,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1289334892}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2132034798}
+        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+        m_MethodName: ExitShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1289334892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6427,7 +6463,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1360907007}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2132034798}
+        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+        m_MethodName: BuyAttackCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1360907007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8218,7 +8266,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1780905382}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2132034798}
+        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+        m_MethodName: BuyHealCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1780905382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9299,7 +9359,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 91a927cf9dd637a45afce8319cf5e363, type: 2}
   playerDefense: 0
   enemyDefense: 0
-  gold: 0
+  gold: 100
+  shopPanel: {fileID: 526618218}
+  shopChance: 100
 --- !u!4 &2132034799
 Transform:
   m_ObjectHideFlags: 0

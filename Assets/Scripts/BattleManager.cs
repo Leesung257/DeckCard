@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using System.IO;
+using UnityEngine.Experimental.AI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -117,6 +119,7 @@ public class BattleManager : MonoBehaviour
 
     public GameObject shopPanel;
     public int shopChance = 30;
+
 
     void Start()
     { 
@@ -1106,6 +1109,158 @@ public class BattleManager : MonoBehaviour
     public void BuyHealCard()
     {
         BuyCard(healCard, 25);
+    }
+
+    public void SaveGame()
+    {
+        SaveData saveData = new SaveData();
+
+        saveData.gold = gold;
+        saveData.playerHp = playerHp;
+        saveData.currentStage = currentEnemyIndex+1;
+
+        foreach(CardInstance card in deck)
+        {
+            CardSaveData cardSaveData = new CardSaveData();
+
+            cardSaveData.cardName = card.cardData.cardName;
+            cardSaveData.isUpgraded = card.isUpgraded;
+
+            saveData.cards.Add(cardSaveData);
+        }
+
+        foreach(CardInstance card in hand)
+        {
+            CardSaveData cardSaveData = new CardSaveData();
+
+            cardSaveData.cardName = card.cardData.cardName;
+            cardSaveData.isUpgraded = card.isUpgraded;
+
+            saveData.cards.Add(cardSaveData);
+        }
+
+        foreach(CardInstance card in discardPile)
+        {
+            CardSaveData cardSaveData = new CardSaveData();
+
+            cardSaveData.cardName = card.cardData.cardName;
+            cardSaveData.isUpgraded = card.isUpgraded;
+
+            saveData.cards.Add(cardSaveData);
+        }
+
+        string json = JsonUtility.ToJson(saveData, true);
+
+        string path = Application.persistentDataPath + "/save.json";
+
+        Debug.Log(json);
+        Debug.Log("저장 경로: " + path);
+
+        File.WriteAllText(path, json);
+
+        AddLog("게임 저장 완료");
+    }
+
+    public void LoadGame()
+    {
+        string path = Application.persistentDataPath + "/save.json";
+
+        if (File.Exists(path) == false)
+        {
+            AddLog("저장 파일이 없습니다");
+            return;
+        }
+
+        string json = File.ReadAllText(path);
+
+        SaveData saveData = JsonUtility.FromJson<SaveData>(json);
+
+        gold = saveData.gold;
+        playerHp = saveData.playerHp;
+        currentEnemyIndex = saveData.currentStage - 1;
+
+        deck.Clear();
+        hand.Clear();
+        discardPile.Clear();
+
+        for(int i = 0; i < saveData.cards.Count; i++)
+        {
+            CardData cardData = FindCardData(saveData.cards[i].cardName);
+
+            if (cardData == null)
+            {
+                Debug.LogWarning(saveData.cards[i].cardName + "카드를 찾을 수 없습니다");
+                continue;
+            }
+
+            CardInstance cardInstance = new CardInstance(cardData);
+            cardInstance.isUpgraded = saveData.cards[i].isUpgraded;
+
+            deck.Add(cardInstance);
+        }
+
+        enemyHp = enemies[currentEnemyIndex].maxHp;
+        enemyDefense = 0;
+        playerDefense = 0;
+        bossTurnCount = 0;
+        enemyAttackBonus = 0;
+
+        ShuffleDeck();
+        DrawCards();
+        DecideNextEnemyAction();
+
+        AddLog("게임 불러오기 완료");
+
+        UpdateUI();
+    }
+
+    CardData FindCardData(string cardName)
+    {
+        if(attackCard.cardName== cardName)
+        {
+            return attackCard;
+        }
+
+        if(strongAttackCard.cardName == cardName)
+        {
+            return strongAttackCard;
+        }
+
+        if(defenseCard.cardName == cardName)
+        {
+            return defenseCard;
+        }
+
+        if(healCard.cardName == cardName)
+        {
+            return healCard;
+        }
+
+        foreach(CardData card in commonCards)
+        {
+            if(card.cardName== cardName)
+            {
+                return card;
+            }
+        }
+
+        foreach(CardData card in rareCards)
+        {
+            if(card.cardName == cardName)
+            {
+                return card;
+            }
+        }
+
+        foreach(CardData card in epicCards)
+        {
+            if(card.cardName== cardName)
+            {
+                return card;
+            }
+        }
+
+        return null;
     }
 
     void UpdateUI()
