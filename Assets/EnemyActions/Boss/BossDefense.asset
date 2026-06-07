@@ -16,6 +16,6 @@ MonoBehaviour:
   actionType: 2
   damage: 0
   hitCount: 0
-  defense: 15
+  defense: 10
   ignoreDefense: 0
-  chance: 0
+  chance: 30

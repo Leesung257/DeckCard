@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: BossData
   m_EditorClassIdentifier: 
   enemyName: "\uBCF4\uC2A4"
-  maxHp: 150
-  attackDamage: 18
+  maxHp: 120
+  attackDamage: 14
   isBoss: 1
-  specialAttackDamage: 35
-  specialAttackTurn: 3
+  specialAttackDamage: 25
+  specialAttackTurn: 4
   actions:
   - {fileID: 11400000, guid: dfb351aba96c0c04ca04cd9de77fbb9c, type: 2}
   - {fileID: 11400000, guid: 7a0cbaf1d435db743b3639eb2525d185, type: 2}

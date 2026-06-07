@@ -18,4 +18,4 @@ MonoBehaviour:
   hitCount: 0
   defense: 0
   ignoreDefense: 0
-  chance: 50
+  chance: 20

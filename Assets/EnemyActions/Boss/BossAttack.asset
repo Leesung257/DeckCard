@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: "\uBCF4\uC2A4 \uACF5\uACA9"
   actionType: 0
-  damage: 18
+  damage: 14
   hitCount: 0
   defense: 0
   ignoreDefense: 0
