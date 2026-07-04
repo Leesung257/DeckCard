@@ -1316,6 +1316,10 @@ public class BattleManager : MonoBehaviour
         AddLog("게임 불러오기 완료");
 
         UpdateUI();
+
+        Debug.Log("로드된 스테이지 : " + currentEnemyIndex);
+        Debug.Log("로드된 적 이름 : " + enemies[currentEnemyIndex].enemyName);
+        Debug.Log("로드 후 적 HP : " + enemyHp);
     }
 
     SaveData LoadSaveDataFromFile(string path)
@@ -1330,6 +1334,10 @@ public class BattleManager : MonoBehaviour
         RestoreCardsFromSaveData(saveData);
         ResetBattleStateAfterLoad();
 
+        isChoosingReward = false;
+        isEventStage = false;
+        usedDeckAction = false;
+        HideAllChoiceButtons();
         ShuffleDeck();
         DrawCards();
         DecideNextEnemyAction();
@@ -1585,6 +1593,23 @@ public class BattleManager : MonoBehaviour
                 cardButtons[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    void HideAllChoiceButtons()
+    {
+        HideRewardButtons();
+        HideEventButtons();
+
+        upgradeCardButton.gameObject.SetActive(false);
+        removeCardButton.gameObject.SetActive(false);
+
+        HideUpgradeSelectButtons();
+        HideRemoveSelectButtons();
+
+        nextStageButton.gameObject.SetActive(false);
+
+        enemyHpText.gameObject.SetActive(true);
+        enemyAttackText.gameObject.SetActive(true);
     }
 
     Button[] GetCardButtons()

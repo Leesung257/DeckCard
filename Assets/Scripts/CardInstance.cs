@@ -52,7 +52,7 @@ public class CardInstance
     public string GetDescription()
     {
         string description = "";
-        if (cardData.cardType == CardType.Attack)
+        if (GetDamage() > 0)
         {
             if (cardData.multiHit)
             {
