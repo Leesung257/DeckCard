@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using System.IO;
 using System.Collections;
-using UnityEditor;
 
 public class BattleManager : MonoBehaviour
 {
@@ -255,17 +254,21 @@ public class BattleManager : MonoBehaviour
 
     void DrawCards()
     {
+        for(int i = 0; i < 3; i++)
+        {
+            bool drawSuccess = TryDrawOneCard();
 
-        DrawOneCard();
-        DrawOneCard();
-        DrawOneCard();
+            if (drawSuccess == false)
+            {
+                AddLog("더 이상 뽑을 카드가 없습니다");
+                break;
+            }
+        }
 
-        SetcardButtonText(cardButton1, hand[0]);
-        SetcardButtonText(cardButton2, hand[1]);
-        SetcardButtonText(cardButton3, hand[2]);
+        UpdateCardButtonTexts();
     }
 
-    void DrawOneCard()
+    bool TryDrawOneCard()
     {
         if (deck.Count == 0)
         {
@@ -274,9 +277,16 @@ public class BattleManager : MonoBehaviour
             ShuffleDeck();
         }
 
+        if (deck.Count == 0)
+        {
+            return false;
+        }
+
         CardInstance card = deck[0];
         deck.RemoveAt(0);
         hand.Add(card);
+
+        return true;
     }
 
 
@@ -297,7 +307,7 @@ public class BattleManager : MonoBehaviour
 
     void UseCard(int handIndex)
     {
-        if (CanUseCard() == false)
+        if (CanUseCard(handIndex) == false)
         {
             return;
         }
@@ -314,12 +324,14 @@ public class BattleManager : MonoBehaviour
         EndPlayerTurnAfterCard();
     }
 
-    bool CanUseCard()
+    bool CanUseCard(int handIndex)
     {
         return playerHp > 0
             && currentEnemyIndex < enemies.Length
             && isChoosingReward == false
-            && enemyHp > 0;
+            && enemyHp > 0
+            && handIndex >= 0
+            && handIndex < hand.Count;
     }
 
     void ApplyCardAttack(CardInstance card)
@@ -406,17 +418,22 @@ public class BattleManager : MonoBehaviour
     {
         DiscardHand();
 
-        CheckEnemyDead();
+        bool enemyDead = CheckEnemyDead();
+
+        if (enemyDead)
+        {
+            UpdateUI();
+            return;
+        }
 
         if (currentEnemyIndex < enemies.Length && enemyHp > 0 && playerHp > 0)
         {
             EnemyAttack();
         }
 
-        if (currentEnemyIndex < enemies.Length)
+        if (currentEnemyIndex < enemies.Length && playerHp > 0)
         {
             DrawCards();
-
         }
 
         UpdateUI();
@@ -497,42 +514,45 @@ public class BattleManager : MonoBehaviour
         return;
     }
 
-    void CheckEnemyDead()
+    bool CheckEnemyDead()
     {
-        if(enemyHp<=0)
+        if (enemyHp > 0)
         {
-            HideCardButtons();
-
-            enemyDefense = 0;
-            enemyAttackBonus = 0;
-            nextEnemyAction = null;
-            isNextBossSpecialAttack = false;
-
-            int rewardGold = Random.Range(15, 26);
-
-            currentEnemyIndex++;
-
-            if (currentEnemyIndex >= enemies.Length)
-            {
-                enemyHp = 0;
-
-                HideEnemyText();
-
-                resultText.text = "보스 처치! Game Clear";
-            }
-            else
-            {
-                enemyHp = 0;
-                gold += rewardGold;
-                AddLog(rewardGold + " 골드 획득");
-
-                HideEnemyText();
-
-                resultText.text = "카드 보상을 선택하세요";
-                ShowRewardButtons();
-                
-            }
+            return false;
         }
+
+        HideCardButtons();
+
+        enemyDefense = 0;
+        enemyAttackBonus = 0;
+        nextEnemyAction = null;
+        isNextBossSpecialAttack = false;
+
+        int rewardGold = Random.Range(15, 26);
+
+        currentEnemyIndex++;
+
+        if (currentEnemyIndex >= enemies.Length)
+        {
+            enemyHp = 0;
+
+            HideEnemyText();
+
+            resultText.text = "보스 처치! Game Clear";
+        }
+        else
+        {
+            enemyHp = 0;
+            gold += rewardGold;
+            AddLog(rewardGold + " 골드 획득");
+
+            HideEnemyText();
+
+            resultText.text = "카드 보상을 선택하세요";
+            ShowRewardButtons();
+        }
+
+        return true;
     }
 
     public void GoToNextStage()
@@ -606,17 +626,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        List<CardInstance> allCards = GetAllPlayerCards();
-
-        List<CardInstance> upgradeableCards = new List<CardInstance>();
-
-        for(int i = 0; i < allCards.Count; i++)
-        {
-            if (!allCards[i].isUpgraded)
-            {
-                upgradeableCards.Add(allCards[i]);
-            }
-        }
+        List<CardInstance> upgradeableCards = GetUpgradeableCards();
 
         if(upgradeableCards.Count < 3)
         {
@@ -635,6 +645,22 @@ public class BattleManager : MonoBehaviour
         SetcardButtonText(upgradeSelectButton3, upgradeCard3);
 
         ShowUpgradeSelectButtons();
+    }
+
+    List<CardInstance> GetUpgradeableCards()
+    {
+        List<CardInstance> allCards = GetAllPlayerCards();
+        List<CardInstance> upgradeableCards = new List<CardInstance>();
+
+        for(int i = 0; i < allCards.Count; i++)
+        {
+            if (!allCards[i].isUpgraded)
+            {
+                upgradeableCards.Add(allCards[i]);
+            }
+        }
+
+        return upgradeableCards;
     }
 
     void ShuffleCards(List<CardInstance> cards)
@@ -709,11 +735,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("showRemoveshoice 실행");
-
         List<CardInstance> allCards = GetAllPlayerCards();
-
-        Debug.Log("전체 카드수 : " + allCards.Count);
 
         if (allCards.Count < 3)
         {
@@ -732,9 +754,6 @@ public class BattleManager : MonoBehaviour
         SetcardButtonText(removeSelectButton3, removeCard3);
 
         ShowRemoveSelectButtons();
-
-        Debug.Log("버튼1 상태 : " + removeSelectButton1.gameObject.activeSelf);
-        Debug.Log("버튼1 위치 : " + removeSelectButton1.transform.position);
     }
 
     public void SelectRemove1()
@@ -806,16 +825,52 @@ public class BattleManager : MonoBehaviour
 
     public void EventUpgrade()
     {
+        if (CanShowUpgradeChoices() == false)
+        {
+            AddLog("강화 가능한 카드가 부족합니다");
+            return;
+        }
+
         AddLog("이벤트 : 카드 강화 선택");
         HideEventButtons();
         ShowUpgradeChoices();
     }
 
+    bool CanShowUpgradeChoices()
+    {
+        if (usedDeckAction)
+        {
+            return false;
+        }
+
+        List<CardInstance> upgradeableCards=GetUpgradeableCards();
+
+        return upgradeableCards.Count >= 3;
+    }
+
     public void EventRemove()
     {
+        if (CanShowRemoveChoices() == false)
+        {
+            AddLog("삭제할 카드가 부족합니다");
+            return;
+        }
+
         AddLog("이벤트 : 카드 제거 선택");
         HideEventButtons();
         ShowRemoveChoices();
+    }
+
+    bool CanShowRemoveChoices()
+    {
+        if (usedDeckAction)
+        {
+            return false;
+        }
+
+        List<CardInstance> allCards = GetAllPlayerCards();
+
+        return allCards.Count >= 3;
     }
 
     void EndEventStage()
@@ -1378,5 +1433,28 @@ public class BattleManager : MonoBehaviour
     void UpdateGoldUI()
     {
         goldText.text = "Gold : " + gold;
+    }
+
+    void UpdateCardButtonTexts()
+    {
+        Button[] cardButtons = new Button[]
+        {
+            cardButton1,
+            cardButton2,
+            cardButton3
+        };
+
+        for(int i = 0; i < cardButtons.Length; i++)
+        {
+            if(i<hand.Count)
+            {
+                cardButtons[i].gameObject.SetActive(true);
+                SetcardButtonText(cardButtons[i], hand[i]);
+            }
+            else
+            {
+                cardButtons[i].gameObject.SetActive(false);
+            }
+        }
     }
 }
