@@ -1031,6 +1031,7 @@ public class BattleManager : MonoBehaviour
             ignoreAmount=playerDefense;
         }
 
+        playerDefense -= ignoreAmount;
         playerHp -= ignoreAmount;
 
         AddLog(action.actionName);
