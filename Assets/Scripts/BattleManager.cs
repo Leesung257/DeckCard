@@ -281,7 +281,6 @@ public class BattleManager : MonoBehaviour
     void PreparePlayerForNextStage()
     {
         usedDeckAction = false;
-        HideDeckActionButtons();
 
         DiscardHand();
         DrawCards();
@@ -444,8 +443,10 @@ public class BattleManager : MonoBehaviour
         }
 
         int totalDamage = CalculateCardDamage(card);
-
+        
+        AddLog(totalDamage + " 데미지 시도");
         DealDamageToEnemy(totalDamage);
+
     }
 
     int CalculateCardDamage(CardInstance card)
@@ -540,10 +541,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    Button[] GetCardButtons()
-    {
-        return new Button[] { cardButton1, cardButton2, cardButton3 };
-    }
+    
 
     //Enemy Action
     void ExecuteEnemyTurn()
@@ -572,8 +570,6 @@ public class BattleManager : MonoBehaviour
         DecideNextEnemyAction();
 
         UpdateUI();
-
-        return;
     }
 
     void ExecuteBossSpecialAttack(EnemyData currentEnemy)
@@ -907,12 +903,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    Button[] GetRewardButtons()
-    {
-        return new Button[] { rewardButton1, rewardButton2, rewardButton3 };
-    }
+    
 
-    //Deck Ation - Upgrade / Remove
+    //Deck Action - Upgrade / Remove
     public void ShowUpgradeChoices()
     {
         if (usedDeckAction)
@@ -925,7 +918,7 @@ public class BattleManager : MonoBehaviour
 
         Button[] upgradeButtons = GetUpgradeSelectButtons();
 
-        if(upgradeableCards.Count < 3)
+        if(upgradeableCards.Count < upgradeButtons.Length)
         {
             Debug.Log("카드가 3장 미만이 불가");
             return;
@@ -1005,13 +998,10 @@ public class BattleManager : MonoBehaviour
 
         List<CardInstance> upgradeableCards=GetUpgradeableCards();
 
-        return upgradeableCards.Count >= 3;
+        return upgradeableCards.Count >= GetUpgradeSelectButtons().Length;
     }
 
-    Button[] GetUpgradeSelectButtons()
-    {
-        return new Button[] { upgradeSelectButton1, upgradeSelectButton2, upgradeSelectButton3 };
-    }
+    
 
     public void ShowRemoveChoices()
     {
@@ -1107,25 +1097,22 @@ public class BattleManager : MonoBehaviour
 
         List<CardInstance> allCards = GetAllPlayerCards();
 
-        return allCards.Count >= 3;
+        return allCards.Count >= GetRemoveSelectButtons().Length;
     }
-    Button[] GetRemoveSelectButtons()
-    {
-        return new Button[] { removeSelectButton1, removeSelectButton2, removeSelectButton3 };
-    }
+    
 
 
     //Event
     void HideEventButtons()
     {
-        SetButtonsActive(new Button[] { eventHealButton, eventRemoveButton, eventUpgradeButton }, false);
+        SetButtonsActive(GetEventButtons(), false);
     }
 
     void ShowEventButtons()
     {
         isEventStage = true;
 
-        SetButtonsActive(new Button[] { eventHealButton, eventRemoveButton, eventUpgradeButton }, true);
+        SetButtonsActive(GetEventButtons(), true);
 
         HideCardButtons();
 
@@ -1136,11 +1123,7 @@ public class BattleManager : MonoBehaviour
     public void EventHeal()
     {
         playerHp += EventHealAmount;
-
-        if (playerHp > playerMaxHp)
-        {
-            playerHp = playerMaxHp;
-        }
+        ClampPlayerHp();
 
         AddLog("이벤트 : HP 20 회복");
         EndEventStage();
@@ -1203,6 +1186,7 @@ public class BattleManager : MonoBehaviour
     public void ExitShop()
     {
         shopPanel.SetActive(false);
+        resultText.gameObject.SetActive(true);
 
         resultText.text = "상점을 나왔습니다.";
         AddLog("상점 종료");
@@ -1267,20 +1251,6 @@ public class BattleManager : MonoBehaviour
     }
 
     //Save / Load
-    SaveData CreateSaveData()
-    {
-        SaveData saveData = new SaveData();
-
-        saveData.gold = gold;
-        saveData.playerHp = playerHp;
-        saveData.currentStage = currentEnemyIndex + 1;
-
-        AddCardToSaveData(deck, saveData);
-        AddCardToSaveData(hand, saveData);
-        AddCardToSaveData(discardPile, saveData);
-
-        return saveData;
-    }
     public void SaveGame()
     {
         SaveData saveData = CreateSaveData();
@@ -1294,6 +1264,21 @@ public class BattleManager : MonoBehaviour
         File.WriteAllText(path, json);
 
         AddLog("게임 저장 완료");
+    }
+
+    SaveData CreateSaveData()
+    {
+        SaveData saveData = new SaveData();
+
+        saveData.gold = gold;
+        saveData.playerHp = playerHp;
+        saveData.currentStage = currentEnemyIndex + 1;
+
+        AddCardToSaveData(deck, saveData);
+        AddCardToSaveData(hand, saveData);
+        AddCardToSaveData(discardPile, saveData);
+
+        return saveData;
     }
 
     string GetSavePath()
@@ -1382,11 +1367,7 @@ public class BattleManager : MonoBehaviour
 
     void ResetBattleStateAfterLoad()
     {
-        enemyHp = enemies[currentEnemyIndex].maxHp;
-        enemyDefense = 0;
-        playerDefense = 0;
-        bossTurnCount = 0;
-        enemyAttackBonus = 0;
+        ResetStageBattleState();
     }
 
     CardData FindCardData(string cardName)
@@ -1533,12 +1514,12 @@ public class BattleManager : MonoBehaviour
 
     void ShowCardButtons()
     {
-        SetButtonsActive(new Button[] { cardButton1, cardButton2, cardButton3 }, true);
+        SetButtonsActive(GetCardButtons(), true);
     }
 
     void HideCardButtons()
     {
-        SetButtonsActive(new Button[] { cardButton1, cardButton2, cardButton3 }, false);
+        SetButtonsActive(GetCardButtons(), false);
     }
 
     void HideEnemyText()
@@ -1590,12 +1571,7 @@ public class BattleManager : MonoBehaviour
 
     void UpdateCardButtonTexts()
     {
-        Button[] cardButtons = new Button[]
-        {
-            cardButton1,
-            cardButton2,
-            cardButton3
-        };
+        Button[] cardButtons = GetCardButtons();
 
         for(int i = 0; i < cardButtons.Length; i++)
         {
@@ -1611,6 +1587,30 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    Button[] GetCardButtons()
+    {
+        return new Button[] { cardButton1, cardButton2, cardButton3 };
+    }
+
+    Button[] GetUpgradeSelectButtons()
+    {
+        return new Button[] { upgradeSelectButton1, upgradeSelectButton2, upgradeSelectButton3 };
+    }
+
+    Button[] GetRewardButtons()
+    {
+        return new Button[] { rewardButton1, rewardButton2, rewardButton3 };
+    }
+
+    Button[] GetRemoveSelectButtons()
+    {
+        return new Button[] { removeSelectButton1, removeSelectButton2, removeSelectButton3 };
+    }
+
+    Button[] GetEventButtons()
+    {
+        return new Button[] { eventHealButton, eventRemoveButton, eventUpgradeButton };
+    }
 
     IEnumerator PlayCardAnimation(Button button, System.Action action)
     {
