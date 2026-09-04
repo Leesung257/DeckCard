@@ -1,9 +1,12 @@
 ﻿using System.IO;
 using UnityEngine;
+using System;
 
 public class SaveManager : MonoBehaviour
 {
     private const string SaveFileName = "/save.json";
+
+    [SerializeField] private ServerSaveApiClient serverSaveApiClient;
 
     public bool SaveLocal(SaveData saveData)
     {
@@ -55,5 +58,60 @@ public class SaveManager : MonoBehaviour
             Debug.LogError("게임 불러오기 실패: " + e.Message);
             return false;
         }
+    }
+
+    private void Awake()
+    {
+        serverSaveApiClient = GetComponent<ServerSaveApiClient>();
+
+        if (serverSaveApiClient == null)
+        {
+            serverSaveApiClient = gameObject.AddComponent<ServerSaveApiClient>();
+        }
+    }
+
+    public void SaveServer(
+        SaveData saveData,
+        string username,
+        string password,
+        Action<bool, string> onComplete)
+    {
+        string saveJson = JsonUtility.ToJson(saveData, true);
+
+        serverSaveApiClient.SaveGameToServer(
+            username,
+            password, 
+            saveJson, 
+            onComplete);
+    }
+
+    public void LoadServer(
+        string username,
+        string password,
+        Action<bool, SaveData> onComplete)
+    {
+        serverSaveApiClient.LoadGameFromServer(
+            username,
+            password,
+            (success, responseJson) =>
+            {
+                if (success == false)
+                {
+                    onComplete?.Invoke(false, null);
+                    return;
+                }
+
+                LoadGameServerResponse response = JsonUtility.FromJson<LoadGameServerResponse>(responseJson);
+
+                if (response == null || string.IsNullOrWhiteSpace(response.saveJson))
+                {
+                    onComplete?.Invoke(false, null);
+                    return;
+                }
+
+                SaveData saveData = JsonUtility.FromJson<SaveData>(response.saveJson);
+
+                onComplete?.Invoke(saveData != null, saveData);
+            });
     }
 }

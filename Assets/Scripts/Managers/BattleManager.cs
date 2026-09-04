@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 
 public class BattleManager : MonoBehaviour
 {
+    [SerializeField] private string testUsername = "lee";
+    [SerializeField] private string testPassword = "1234";
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     //Constant
     const int EventHealAmount = 20;
@@ -1485,6 +1487,48 @@ public class BattleManager : MonoBehaviour
         return null;
     }
 
+
+    public void SaveGameToServer()
+    {
+        SaveData saveData = CreateSaveData();
+
+        saveManager.SaveServer(
+            saveData,
+            testUsername,
+            testPassword,
+            (success, message) =>
+            {
+                if (success)
+                {
+                    AddLog("서버 저장 완료");
+                }
+                else
+                {
+                    AddLog("서버 저장 실패");
+                }
+            });
+    }
+
+    public void LoadGameFromServer()
+    {
+        saveManager.LoadServer(
+            testUsername,
+            testPassword,
+            (success, saveData) =>
+            {
+                if (success == false)
+                {
+                    AddLog("서버 불러오기 실패");
+                    return;
+                }
+
+                ApplyLoadedGame(saveData);
+
+                AddLog("서버 불러오기 완료");
+
+                UpdateUI();
+            });
+    }
 
     //UI - Text
     void AddLog(string message)
