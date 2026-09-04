@@ -103,4 +103,19 @@ public class BattleUIManager : MonoBehaviour
     {
         goldText.text = "Gold : " + gold;
     }
+
+    public void SetResultText(string message)
+    {
+        resultText.text = message;
+    }
+
+    public void SetResultTextActive(bool active)
+    {
+        resultText.gameObject.SetActive(active);
+    }
+
+    public void ShowEnemyIntent(string intentText)
+    {
+        resultText.text = intentText;
+    }
 }

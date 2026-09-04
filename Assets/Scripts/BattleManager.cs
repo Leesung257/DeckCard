@@ -127,7 +127,7 @@ public class BattleManager : MonoBehaviour
 
     void InitializeBattleLog()
     {
-        resultText.text = "";
+        battleUIManager.SetResultText("");
         battleUIManager.InitializeBattleLog();
     }
 
@@ -264,7 +264,7 @@ public class BattleManager : MonoBehaviour
 
         ShowCardButtons();
         ShowEnemyText();
-        resultText.gameObject.SetActive(true);
+        battleUIManager.SetResultTextActive(true);
     }
 
     void ResetStageBattleState()
@@ -760,13 +760,13 @@ public class BattleManager : MonoBehaviour
     void PrepareBossSpecialAttack(EnemyData currentEnemy)
     {
         isNextBossSpecialAttack = true;
-        resultText.text = "적 행동 : " + currentEnemy.enemyName + " 특수 공격(" + currentEnemy.specialAttackDamage + ")";
+        battleUIManager.ShowEnemyIntent("보스가 특수 공격을 준비합니다!");
     }
 
     void PrepareRandomEnemyAction(EnemyData currentEnemy)
     {
         nextEnemyAction = GetRandomEnemyAction(currentEnemy);
-        resultText.text = "다음 행동 : " + nextEnemyAction.actionName;
+        battleUIManager.ShowEnemyIntent("다음 행동 : " + nextEnemyAction.actionName);
     }
 
     // Reward
@@ -1174,7 +1174,7 @@ public class BattleManager : MonoBehaviour
 
         HideCardButtons();
         HideEventButtons();
-        resultText.gameObject.SetActive(false);
+        battleUIManager.SetResultTextActive(false);
 
         nextStageButton.gameObject.SetActive(false);
         HideDeckActionButtons();
@@ -1186,7 +1186,7 @@ public class BattleManager : MonoBehaviour
     public void ExitShop()
     {
         shopPanel.SetActive(false);
-        resultText.gameObject.SetActive(true);
+        battleUIManager.SetResultTextActive(true);
 
         resultText.text = "상점을 나왔습니다.";
         AddLog("상점 종료");
