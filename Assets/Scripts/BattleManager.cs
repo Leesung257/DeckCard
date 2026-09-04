@@ -10,7 +10,6 @@ public class BattleManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     //Constant
-    const int MaxBattleLogCount = 5;
     const int EventHealAmount = 20;
 
     const int CommonRewardChance = 70;
@@ -81,6 +80,8 @@ public class BattleManager : MonoBehaviour
 
     public GameObject shopPanel;
 
+    [SerializeField] private BattleUIManager battleUIManager;
+
     //Battle
     public int playerHp = 100;
     public int playerMaxHp = 100;
@@ -111,14 +112,14 @@ public class BattleManager : MonoBehaviour
     private readonly List<CardInstance> removeCards = new List<CardInstance>();
 
     //Rewards / Events / Shop state
-    List<string> battleLogs = new List<string>();
-
     bool isEventStage = false;
     bool isChoosingReward = false;
     bool usedDeckAction = false;
 
     void Start()
-    { 
+    {
+        Debug.Assert(battleUIManager != null, "BattleUIManager 연결 실패");
+
         InitializeBattleLog();
         InitializeUIState();
         InitializeFirstStage();
@@ -127,8 +128,7 @@ public class BattleManager : MonoBehaviour
     void InitializeBattleLog()
     {
         resultText.text = "";
-        battleLogs.Clear();
-        battleLogText.text = "";
+        battleUIManager.InitializeBattleLog();
     }
 
     void InitializeUIState()
@@ -1316,10 +1316,6 @@ public class BattleManager : MonoBehaviour
         AddLog("게임 불러오기 완료");
 
         UpdateUI();
-
-        Debug.Log("로드된 스테이지 : " + currentEnemyIndex);
-        Debug.Log("로드된 적 이름 : " + enemies[currentEnemyIndex].enemyName);
-        Debug.Log("로드 후 적 HP : " + enemyHp);
     }
 
     SaveData LoadSaveDataFromFile(string path)
@@ -1431,19 +1427,7 @@ public class BattleManager : MonoBehaviour
     //UI - Text
     void AddLog(string message)
     {
-        battleLogs.Add(message);
-
-        if (battleLogs.Count > MaxBattleLogCount)
-        {
-            battleLogs.RemoveAt(0);
-        }
-
-        battleLogText.text = "";
-
-        for (int i = 0; i < battleLogs.Count; i++)
-        {
-            battleLogText.text += battleLogs[i] + "\n";
-        }
+        battleUIManager.AddLog(message);
     }
 
     void UpdateUI()
@@ -1457,49 +1441,38 @@ public class BattleManager : MonoBehaviour
 
     void UpdateStageUI()
     {
-        if (currentEnemyIndex < enemies.Length)
-        {
-            stageText.text = "Stage" + (currentEnemyIndex + 1);
-        }
-        else
-        {
-            stageText.text = "Clear";
-        }
+        battleUIManager.UpdateStageUI(currentEnemyIndex, enemies.Length);
     }
 
     void UpdatePlayerUI()
     {
-        playerHpText.text = "플레이어 HP : " + playerHp;
-        playerDefenseText.text = "방어도 : " + playerDefense;
+        battleUIManager.UpdatePlayerUI(playerHp, playerDefense);
     }
 
     void UpdateEnemyUI()
     {
-        if (currentEnemyIndex < enemies.Length)
+        bool hasEnemy = currentEnemyIndex < enemies.Length;
+
+        if (hasEnemy)
         {
-            enemyHpText.text = enemies[currentEnemyIndex].enemyName + " HP : " + enemyHp + " / 방어도 : " + enemyDefense;
-            enemyAttackText.text = "적 공격력 : " + enemies[currentEnemyIndex].attackDamage;
+            EnemyData currentEnemy = enemies[currentEnemyIndex];
+
+            battleUIManager.UpdateEnemyUI(true, currentEnemy.enemyName, enemyHp, enemyDefense, currentEnemy.attackDamage);
         }
         else
         {
-            enemyHpText.text = "적 전멸";
-            enemyAttackText.text = "적 공격력 : 0";
+            battleUIManager.UpdateEnemyUI(false, "", 0, 0, 0);
         }
     }
 
     void UpdateCardCountUI()
     {
-        deckCountText.text = "덱 : " + deck.Count;
-        handCountText.text = "손패 : " + hand.Count;
-        discardCountText.text = "묘지 : " + discardPile.Count;
-
-        int totalCardCount = deck.Count + hand.Count + discardPile.Count;
-        totalCardCountText.text = "전체 카드 : " + totalCardCount;
+        battleUIManager.UpdateCardCountUI(deck.Count, hand.Count, discardPile.Count);
     }
 
     void UpdateGoldUI()
     {
-        goldText.text = "Gold : " + gold;
+        battleUIManager.UpdateGoldUI(gold);
     }
 
     //UI - Button

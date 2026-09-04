@@ -387,7 +387,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 260, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &167757144
 GameObject:
@@ -1240,7 +1240,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &438255972
 MonoBehaviour:
@@ -2231,7 +2231,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &591072819
 MonoBehaviour:
@@ -2364,7 +2364,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -260, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &599960322
 MonoBehaviour:
@@ -2630,7 +2630,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -260, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &622939831
 MonoBehaviour:
@@ -3300,7 +3300,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -260, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &735769260
 MonoBehaviour:
@@ -3840,7 +3840,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 260, y: -125}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &826969139
 MonoBehaviour:
@@ -4795,7 +4795,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -125}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &998769095
 MonoBehaviour:
@@ -5065,7 +5065,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 260, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1109401459
 MonoBehaviour:
@@ -7856,7 +7856,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -260, y: -125}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1711028934
 MonoBehaviour:
@@ -8670,7 +8670,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 260, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1866113843
 MonoBehaviour:
@@ -8803,7 +8803,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 95}
+  m_SizeDelta: {x: 180, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1976974595
 MonoBehaviour:
@@ -9065,9 +9065,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4f341e7cbbdbae4f8d5e8100dca6b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHp: 100
-  enemyHp: 50
-  eventChance: 50
   playerHpText: {fileID: 940714429}
   enemyHpText: {fileID: 1168487263}
   resultText: {fileID: 668178616}
@@ -9098,6 +9095,10 @@ MonoBehaviour:
   eventHealButton: {fileID: 624351138}
   eventUpgradeButton: {fileID: 1484731708}
   eventRemoveButton: {fileID: 1251775667}
+  shopAttackCardButton: {fileID: 1360907006}
+  shopDefenseCardButton: {fileID: 798122160}
+  shopStrongAttackButton: {fileID: 228606147}
+  shopHealCardButton: {fileID: 1780905381}
   attackCard: {fileID: 11400000, guid: ba9ef6a761309e44a8a8a93ff65d1319, type: 2}
   strongAttackCard: {fileID: 11400000, guid: 8b12deabb69833146ab475c57de49dd3, type: 2}
   healCard: {fileID: 11400000, guid: 3fbb1b5c243cf6d46903ba6b6f749719, type: 2}
@@ -9115,21 +9116,20 @@ MonoBehaviour:
   epicCards:
   - {fileID: 11400000, guid: a887afc21b2fa6e48bab86480cc79555, type: 2}
   - {fileID: 11400000, guid: 68f1a3c8986e66a478a09fb8b763db76, type: 2}
-  playerMaxHp: 100
   enemies:
   - {fileID: 11400000, guid: a64c228e2686b294bb264f34af86baf2, type: 2}
   - {fileID: 11400000, guid: 0eaffb5d488eea14db4a5119dc5db410, type: 2}
   - {fileID: 11400000, guid: 38647d7953ca9f2478fe44c1c2b8bf40, type: 2}
   - {fileID: 11400000, guid: 91a927cf9dd637a45afce8319cf5e363, type: 2}
+  shopPanel: {fileID: 526618218}
+  playerHp: 100
+  playerMaxHp: 100
   playerDefense: 0
+  enemyHp: 50
   enemyDefense: 0
   gold: 100
-  shopPanel: {fileID: 526618218}
+  eventChance: 50
   shopChance: 30
-  shopAttackCardButton: {fileID: 1360907006}
-  shopDefenseCardButton: {fileID: 798122160}
-  shopStrongAttackButton: {fileID: 228606147}
-  shopHealCardButton: {fileID: 1780905381}
 --- !u!4 &2132034799
 Transform:
   m_ObjectHideFlags: 0

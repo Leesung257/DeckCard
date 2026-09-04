@@ -65,7 +65,7 @@ public class CardData : ScriptableObject
         {
             if (description != "")
             {
-                description = "\n";
+                description += "\n";
             }
 
             description += "자신에게 " + selfDamage + " 피해";
