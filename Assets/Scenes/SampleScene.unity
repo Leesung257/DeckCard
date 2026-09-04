@@ -9046,6 +9046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2132034799}
   - component: {fileID: 2132034798}
+  - component: {fileID: 2132034800}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -9122,6 +9123,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 38647d7953ca9f2478fe44c1c2b8bf40, type: 2}
   - {fileID: 11400000, guid: 91a927cf9dd637a45afce8319cf5e363, type: 2}
   shopPanel: {fileID: 526618218}
+  battleUIManager: {fileID: 2132034800}
   playerHp: 100
   playerMaxHp: 100
   playerDefense: 0
@@ -9129,7 +9131,7 @@ MonoBehaviour:
   enemyDefense: 0
   gold: 100
   eventChance: 50
-  shopChance: 30
+  shopChance: 100
 --- !u!4 &2132034799
 Transform:
   m_ObjectHideFlags: 0
@@ -9145,6 +9147,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2132034800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2132034797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca648516a4cc14a498a1e5280022d44d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleLogText: {fileID: 1052857794}
+  playerHpText: {fileID: 940714429}
+  enemyHpText: {fileID: 1168487263}
+  resultText: {fileID: 668178616}
+  playerDefenseText: {fileID: 1351879640}
+  deckCountText: {fileID: 989827433}
+  handCountText: {fileID: 1266682375}
+  discardCountText: {fileID: 1289885412}
+  totalCardCountText: {fileID: 1385216394}
+  stageText: {fileID: 1209690907}
+  enemyAttackText: {fileID: 2059406662}
+  goldText: {fileID: 1267097968}
+  cardButton1: {fileID: 1711028934}
+  cardButton2: {fileID: 998769095}
+  cardButton3: {fileID: 826969139}
+  rewardButton1: {fileID: 599960324}
+  rewardButton2: {fileID: 591072821}
+  rewardButton3: {fileID: 150388282}
+  nextStageButton: {fileID: 1228913857}
+  upgradeCardButton: {fileID: 1689803675}
+  upgradeSelectButton1: {fileID: 622939833}
+  upgradeSelectButton2: {fileID: 438255974}
+  upgradeSelectButton3: {fileID: 1866113845}
+  removeCardButton: {fileID: 650516079}
+  removeSelectButton1: {fileID: 735769260}
+  removeSelectButton2: {fileID: 1976974595}
+  removeSelectButton3: {fileID: 1109401459}
+  eventHealButton: {fileID: 624351138}
+  eventUpgradeButton: {fileID: 1484731708}
+  eventRemoveButton: {fileID: 1251775667}
+  shopPanel: {fileID: 526618218}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

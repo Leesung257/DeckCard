@@ -120,9 +120,57 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Assert(battleUIManager != null, "BattleUIManager 연결 실패");
 
+        InitializeBattleUI();
         InitializeBattleLog();
         InitializeUIState();
         InitializeFirstStage();
+    }
+
+    void InitializeBattleUI()
+    {
+        battleUIManager = GetComponent<BattleUIManager>();
+
+        if (battleUIManager == null)
+        {
+            battleUIManager = gameObject.AddComponent<BattleUIManager>();
+        }
+
+        battleUIManager.Initialize(
+            playerHpText,
+            enemyHpText,
+            resultText,
+            playerDefenseText,
+            deckCountText,
+            handCountText,
+            discardCountText,
+            totalCardCountText,
+            stageText,
+            enemyAttackText,
+            battleLogText,
+            goldText,
+            cardButton1,
+            cardButton2,
+            cardButton3,
+            rewardButton1,
+            rewardButton2,
+            rewardButton3,
+            nextStageButton,
+            upgradeCardButton,
+            upgradeSelectButton1,
+            upgradeSelectButton2,
+            upgradeSelectButton3,
+            removeCardButton,
+            removeSelectButton1,
+            removeSelectButton2,
+            removeSelectButton3,
+            eventHealButton,
+            eventUpgradeButton,
+            eventRemoveButton,
+            shopAttackCardButton,
+            shopDefenseCardButton,
+            shopStrongAttackButton,
+            shopHealCardButton,
+            shopPanel);
     }
 
     void InitializeBattleLog()
@@ -134,12 +182,12 @@ public class BattleManager : MonoBehaviour
     void InitializeUIState()
     {
         HideRewardButtons();
-        nextStageButton.gameObject.SetActive(false);
+        battleUIManager.SetNextStageButtonActive(false);
         HideDeckActionButtons();
         HideUpgradeSelectButtons();
         HideRemoveSelectButtons();
         HideEventButtons();
-        shopPanel.SetActive(false);
+        battleUIManager.HideShopPanel();
     }
 
     void InitializeFirstStage()
@@ -219,7 +267,7 @@ public class BattleManager : MonoBehaviour
 
             HideEnemyText();
 
-            resultText.text = "보스 처치! Game Clear";
+            battleUIManager.SetResultText("보스 처치! Game Clear");
         }
         else
         {
@@ -229,7 +277,7 @@ public class BattleManager : MonoBehaviour
 
             HideEnemyText();
 
-            resultText.text = "카드 보상을 선택하세요";
+            battleUIManager.SetResultText("카드 보상을 선택하세요");
             ShowRewardButtons();
         }
 
@@ -258,7 +306,7 @@ public class BattleManager : MonoBehaviour
 
     void PrepareStageUI()
     {
-        nextStageButton.gameObject.SetActive(false);
+        battleUIManager.SetNextStageButtonActive(false);
         HideDeckActionButtons();
         HideRemoveSelectButtons();
 
@@ -388,17 +436,25 @@ public class BattleManager : MonoBehaviour
     //Player Card Action
     public void UseCard1()
     {
-        StartCoroutine(PlayCardAnimation(cardButton1, () => UseCard(0)));
+        battleUIManager.PlayButtonAnimation(
+                cardButton1,
+                () => UseCard(0)
+            );
     }
 
     public void UseCard2()
     {
-        StartCoroutine(PlayCardAnimation(cardButton2, () => UseCard(1)));
-    }
+        battleUIManager.PlayButtonAnimation(
+        cardButton2,
+        () => UseCard(1)
+    );    }
 
     public void UseCard3()
     {
-        StartCoroutine(PlayCardAnimation(cardButton3, () => UseCard(2)));
+        battleUIManager.PlayButtonAnimation(
+                cardButton3,
+                () => UseCard(2)
+            );
     }
 
     void UseCard(int handIndex)
@@ -579,7 +635,7 @@ public class BattleManager : MonoBehaviour
         specialDamage += enemyAttackBonus;
 
         AddLog(currentEnemy.enemyName + "의 특수 공격" + specialDamage + " 데미지");
-        resultText.text = currentEnemy.enemyName + "의 특수 공격";
+        battleUIManager.SetResultText(currentEnemy.enemyName + "의 특수 공격");
 
         DealDamageToPlayer(specialDamage);
     }
@@ -657,7 +713,7 @@ public class BattleManager : MonoBehaviour
         {
             playerHp = 0;
 
-            resultText.text = "패배...";
+            battleUIManager.SetResultText("패배...");
             AddLog("플레이어 패배...");
         }
     }
@@ -774,27 +830,23 @@ public class BattleManager : MonoBehaviour
     {
         isChoosingReward = false;
 
-        SetButtonsActive(GetRewardButtons(), false);
+        battleUIManager.HideRewardButtons();
     }
 
     void ShowRewardButtons()
     {
         isChoosingReward = true;
-        Button[] rewardButtons = GetRewardButtons();
 
         rewardCards.Clear();
 
-        for (int i = 0; i < rewardButtons.Length; i++)
+        int rewardButtonCount = 3;
+
+        for(int i=0;i<rewardButtonCount;i++)
         {
             rewardCards.Add(GetRandomRewardCard());
         }
 
-        SetButtonsActive(rewardButtons, true);
-
-        for(int i = 0;i < rewardButtons.Length;i++)
-        {
-            SetRewardButtonText(rewardButtons[i], rewardCards[i]);
-        }
+        battleUIManager.ShowRewardButtons(rewardCards);
     }
 
     CardData GetRandomRewardCard()
@@ -843,8 +895,8 @@ public class BattleManager : MonoBehaviour
         {
             return;
         }
-
-        StartCoroutine(PlayCardAnimation(rewardButtons[index], () => SelectReward(rewardCards[index])));
+        battleUIManager.PlayButtonAnimation(
+            rewardButtons[index], () => SelectReward(rewardCards[index]));
     }
 
     void SelectReward(CardData selectCard)
@@ -866,10 +918,10 @@ public class BattleManager : MonoBehaviour
 
         usedDeckAction = false;
 
-        resultText.text = selectCard.cardName + " 획득";
+        battleUIManager.SetResultText(selectCard.cardName + " 획득");
         AddLog(selectCard.cardName + " 획득");
 
-        nextStageButton.gameObject.SetActive(false);
+        battleUIManager.SetNextStageButtonActive(false);
         HideDeckActionButtons();
     }
 
@@ -898,7 +950,8 @@ public class BattleManager : MonoBehaviour
         else
         {
             nextStageButton.gameObject.SetActive(true);
-            resultText.text = "다음 스테이지 입장하세요";
+            battleUIManager.SetNextStageButtonActive(true);
+            battleUIManager.SetResultText("다음 스테이지 입장하세요");
             AddLog("이벤트 없이 다음 스테이지 진행");
         }
     }
@@ -965,8 +1018,11 @@ public class BattleManager : MonoBehaviour
         {
             return;
         }
+        battleUIManager.PlayButtonAnimation(
+            upgradeButtons[index],
+            () => UpgradeCard(upgradeCards[index]));
 
-        StartCoroutine(PlayCardAnimation(upgradeButtons[index], () => UpgradeCard(upgradeCards[index])));
+        //StartCoroutine(PlayCardAnimation(upgradeButtons[index], () => UpgradeCard(upgradeCards[index])));
     }
 
     void UpgradeCard(CardInstance card)
@@ -1062,8 +1118,10 @@ public class BattleManager : MonoBehaviour
         {
             return;
         }
-
-        StartCoroutine(PlayCardAnimation(removeButtons[index], () => RemoveCard(removeCards[index])));
+        battleUIManager.PlayButtonAnimation(
+            removeButtons[index],
+            () => RemoveCard(removeCards[index]));
+       // StartCoroutine(PlayCardAnimation(removeButtons[index], () => RemoveCard(removeCards[index])));
     }
 
     void RemoveCard(CardInstance card)
@@ -1112,11 +1170,9 @@ public class BattleManager : MonoBehaviour
     {
         isEventStage = true;
 
-        SetButtonsActive(GetEventButtons(), true);
+        battleUIManager.ShowEventButtons();
 
-        HideCardButtons();
-
-        resultText.text = "이벤트를 선택하세요";
+        battleUIManager.SetResultText("이벤트를 선택하세요");
         AddLog("이벤트 스테이지 진입");
     }
 
@@ -1161,34 +1217,34 @@ public class BattleManager : MonoBehaviour
 
         HideEventButtons();
 
-        nextStageButton.gameObject.SetActive(true);
+        battleUIManager.SetNextStageButtonActive(true);
 
-        resultText.text = "이벤트 완료";
+        battleUIManager.SetResultText("이벤트 완료");
         UpdateUI();
     }
 
     //Shop
     void ShowShop()
     {
-        shopPanel.SetActive(true);
+        battleUIManager.ShowShopPanel();
 
         HideCardButtons();
         HideEventButtons();
         battleUIManager.SetResultTextActive(false);
 
-        nextStageButton.gameObject.SetActive(false);
+        battleUIManager.SetNextStageButtonActive(false);
         HideDeckActionButtons();
 
-        resultText.text = "상점에 입장했습니다";
+        battleUIManager.SetResultText("상점에 입장했습니다");
         AddLog("상점 등장");
     }
 
     public void ExitShop()
     {
-        shopPanel.SetActive(false);
+        battleUIManager.HideShopPanel();
         battleUIManager.SetResultTextActive(true);
 
-        resultText.text = "상점을 나왔습니다.";
+        battleUIManager.SetResultText("상점을 나왔습니다.");
         AddLog("상점 종료");
 
         DecideEventOrNextStageAfterReward();
@@ -1232,22 +1288,30 @@ public class BattleManager : MonoBehaviour
 
     public void BuyAttackCard()
     {
-        StartCoroutine(PlayCardAnimation(shopAttackCardButton, () => BuyCard(attackCard, AttackCardPrice)));
+        battleUIManager.PlayButtonAnimation(
+            shopAttackCardButton,
+            () => BuyCard(attackCard, AttackCardPrice));
     }
 
     public void BuyStrongAttackCard()
     {
-        StartCoroutine(PlayCardAnimation(shopStrongAttackButton, () => BuyCard(strongAttackCard, StrongAttackCardPrice)));
+        battleUIManager.PlayButtonAnimation(
+            shopStrongAttackButton,
+            () => BuyCard(strongAttackCard, StrongAttackCardPrice));
     }
 
     public void BuyDefenseCard()
     {
-        StartCoroutine(PlayCardAnimation(shopDefenseCardButton, () => BuyCard(defenseCard, DefenseCardPrice)));
+        battleUIManager.PlayButtonAnimation(
+            shopDefenseCardButton,
+            () => BuyCard(defenseCard, DefenseCardPrice));
     }
 
     public void BuyHealCard()
     {
-        StartCoroutine(PlayCardAnimation(shopHealCardButton, () => BuyCard(healCard, HealCardPrice)));
+        battleUIManager.PlayButtonAnimation(
+            shopHealCardButton,
+            () => BuyCard(healCard, HealCardPrice));
     }
 
     //Save / Load
@@ -1432,162 +1496,84 @@ public class BattleManager : MonoBehaviour
 
     void UpdateUI()
     {
-        UpdateStageUI();
-        UpdatePlayerUI();
-        UpdateEnemyUI();
-        UpdateCardCountUI();
-        UpdateGoldUI();
+        battleUIManager.UpdateUI(
+            currentEnemyIndex,
+            enemies,
+            playerHp,
+            playerDefense,
+            enemyHp,
+            enemyDefense,
+            deck.Count,
+            hand.Count,
+            discardPile.Count,
+            gold);
     }
-
-    void UpdateStageUI()
-    {
-        battleUIManager.UpdateStageUI(currentEnemyIndex, enemies.Length);
-    }
-
-    void UpdatePlayerUI()
-    {
-        battleUIManager.UpdatePlayerUI(playerHp, playerDefense);
-    }
-
-    void UpdateEnemyUI()
-    {
-        bool hasEnemy = currentEnemyIndex < enemies.Length;
-
-        if (hasEnemy)
-        {
-            EnemyData currentEnemy = enemies[currentEnemyIndex];
-
-            battleUIManager.UpdateEnemyUI(true, currentEnemy.enemyName, enemyHp, enemyDefense, currentEnemy.attackDamage);
-        }
-        else
-        {
-            battleUIManager.UpdateEnemyUI(false, "", 0, 0, 0);
-        }
-    }
-
-    void UpdateCardCountUI()
-    {
-        battleUIManager.UpdateCardCountUI(deck.Count, hand.Count, discardPile.Count);
-    }
-
-    void UpdateGoldUI()
-    {
-        battleUIManager.UpdateGoldUI(gold);
-    }
+    
 
     //UI - Button
-    string FormatCardButtonText(CardInstance card)
-    {
-        return card.GetRarityText() + "\n" + card.GetCardName() + "\n" + card.GetDescription();
-    }
     void SetCardButtonText(Button button, CardInstance card)
     {
-        TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
-        buttonText.text = FormatCardButtonText(card);
-    }
-
-    void SetRewardButtonText(Button button, CardData card)
-    {
-        TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
-
-        buttonText.text = "[" + card.rarity.ToString() + "]" + "\n" + card.cardName + "\n" + card.GetDescription();
+        battleUIManager.SetCardButtonText(button, card);
     }
 
     void ShowCardButtons()
     {
-        SetButtonsActive(GetCardButtons(), true);
+        battleUIManager.ShowCardButtons();
     }
 
     void HideCardButtons()
     {
-        SetButtonsActive(GetCardButtons(), false);
+        battleUIManager.HideCardButtons();
     }
 
     void HideEnemyText()
     {
-        enemyHpText.gameObject.SetActive(false);
-        enemyAttackText.gameObject.SetActive(false);
+        battleUIManager.HideEnemyText();
     }
 
     void ShowEnemyText()
     {
-        enemyHpText.gameObject.SetActive(true);
-        enemyAttackText.gameObject.SetActive(true);
+        battleUIManager.ShowEnemyText();
     }
 
     void HideUpgradeSelectButtons()
     {
-        SetButtonsActive(new Button[] { upgradeSelectButton1, upgradeSelectButton2, upgradeSelectButton3 }, false);
+        battleUIManager.HideUpgradeSelectButtons();
     }
 
     void ShowUpgradeSelectButtons()
     {
-        SetButtonsActive(new Button[] { upgradeSelectButton1, upgradeSelectButton2, upgradeSelectButton3 }, true);
-
+        battleUIManager.ShowUpgradeSelectButtons();
     }
 
     void HideRemoveSelectButtons()
     {
-        SetButtonsActive(new Button[] { removeSelectButton1, removeSelectButton2, removeSelectButton3 }, false);
+        battleUIManager.HideRemoveSelectButtons();
     }
 
     void ShowRemoveSelectButtons()
     {
-        SetButtonsActive(new Button[] { removeSelectButton1, removeSelectButton2, removeSelectButton3 }, true);
+        battleUIManager.ShowRemoveSelectButtons();
     }
 
     void HideDeckActionButtons()
     {
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
+        battleUIManager.HideDeckActionButtons();
     }
 
     void SetButtonsActive(Button[] buttons, bool active)
     {
-        for(int i = 0; i < buttons.Length; i++)
-        {
-            buttons[i].gameObject.SetActive(active);
-        }
+        battleUIManager.SetButtonsActive(buttons, active);
     }
 
     void UpdateCardButtonTexts()
     {
-        Button[] cardButtons = GetCardButtons();
-
-        for(int i = 0; i < cardButtons.Length; i++)
-        {
-            if(i<hand.Count)
-            {
-                cardButtons[i].gameObject.SetActive(true);
-                SetCardButtonText(cardButtons[i], hand[i]);
-            }
-            else
-            {
-                cardButtons[i].gameObject.SetActive(false);
-            }
-        }
+        battleUIManager.UpdateCardButtonTexts(hand);
     }
 
     void HideAllChoiceButtons()
     {
-        HideRewardButtons();
-        HideEventButtons();
-
-        upgradeCardButton.gameObject.SetActive(false);
-        removeCardButton.gameObject.SetActive(false);
-
-        HideUpgradeSelectButtons();
-        HideRemoveSelectButtons();
-
-        nextStageButton.gameObject.SetActive(false);
-
-        enemyHpText.gameObject.SetActive(true);
-        enemyAttackText.gameObject.SetActive(true);
-    }
-
-    Button[] GetCardButtons()
-    {
-        return new Button[] { cardButton1, cardButton2, cardButton3 };
+        battleUIManager.HideAllChoiceButtons();
     }
 
     Button[] GetUpgradeSelectButtons()
@@ -1608,19 +1594,6 @@ public class BattleManager : MonoBehaviour
     Button[] GetEventButtons()
     {
         return new Button[] { eventHealButton, eventRemoveButton, eventUpgradeButton };
-    }
-
-    IEnumerator PlayCardAnimation(Button button, System.Action action)
-    {
-        Vector3 originalScale = button.transform.localScale;
-
-        button.transform.localScale = originalScale * 1.2f;
-
-        yield return new WaitForSeconds(0.15f);
-
-        button.transform.localScale = originalScale;
-
-        action?.Invoke();
     }
 
     struct DamageResult
