@@ -4,6 +4,8 @@ using System.Collections.Generic;
 [Serializable]
 public class SaveData
 {
+    public int saveVersion = 1;
+
     public int gold;
     public int playerHp;
     public int currentStage;

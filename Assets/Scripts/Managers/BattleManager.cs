@@ -3,8 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
-using System.IO;
-using System.Collections;
 
 public class BattleManager : MonoBehaviour
 {
@@ -81,6 +79,7 @@ public class BattleManager : MonoBehaviour
     public GameObject shopPanel;
 
     [SerializeField] private BattleUIManager battleUIManager;
+    [SerializeField] private SaveManager saveManager;
 
     //Battle
     public int playerHp = 100;
@@ -121,6 +120,7 @@ public class BattleManager : MonoBehaviour
         Debug.Assert(battleUIManager != null, "BattleUIManager 연결 실패");
 
         InitializeBattleUI();
+        InitiallizeSaveManager();
         InitializeBattleLog();
         InitializeUIState();
         InitializeFirstStage();
@@ -173,6 +173,15 @@ public class BattleManager : MonoBehaviour
             shopPanel);
     }
 
+    void InitiallizeSaveManager()
+    {
+        saveManager = GetComponent<SaveManager>();
+
+        if(saveManager == null)
+        {
+            saveManager = gameObject.AddComponent<SaveManager>();
+        }
+    }
     void InitializeBattleLog()
     {
         battleUIManager.SetResultText("");
@@ -1319,21 +1328,23 @@ public class BattleManager : MonoBehaviour
     {
         SaveData saveData = CreateSaveData();
 
-        string json = JsonUtility.ToJson(saveData, true);
-        string path = GetSavePath();
+        bool saveSuccess = saveManager.SaveLocal(saveData);
 
-        Debug.Log(json);
-        Debug.Log("저장 경로: " + path);
-
-        File.WriteAllText(path, json);
-
-        AddLog("게임 저장 완료");
+        if(saveSuccess)
+        {
+            AddLog("게임 저장 완료");
+        }
+        else
+        {
+            AddLog("게임 저장 실패");
+        }
     }
 
     SaveData CreateSaveData()
     {
         SaveData saveData = new SaveData();
 
+        saveData.saveVersion = 1;
         saveData.gold = gold;
         saveData.playerHp = playerHp;
         saveData.currentStage = currentEnemyIndex + 1;
@@ -1343,11 +1354,6 @@ public class BattleManager : MonoBehaviour
         AddCardToSaveData(discardPile, saveData);
 
         return saveData;
-    }
-
-    string GetSavePath()
-    {
-        return Application.persistentDataPath + "/save.json";
     }
 
     void AddCardToSaveData(List<CardInstance> cards, SaveData saveData)
@@ -1365,27 +1371,19 @@ public class BattleManager : MonoBehaviour
 
     public void LoadGame()
     {
-        string path = GetSavePath();
+        bool loadSuccess = saveManager.TryLoadLocal(out SaveData saveData);
 
-        if (File.Exists(path) == false)
+        if (loadSuccess == false)
         {
             AddLog("저장 파일이 없습니다");
             return;
         }
-
-        SaveData saveData = LoadSaveDataFromFile(path);
 
         ApplyLoadedGame(saveData);
 
         AddLog("게임 불러오기 완료");
 
         UpdateUI();
-    }
-
-    SaveData LoadSaveDataFromFile(string path)
-    {
-        string json = File.ReadAllText(path);
-        return JsonUtility.FromJson<SaveData>(json);
     }
 
     void ApplyLoadedGame(SaveData saveData)
