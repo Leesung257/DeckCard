@@ -4,13 +4,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
     [SerializeField] private string testUsername = "lee";
     [SerializeField] private string testPassword = "1234";
     private bool hasSubmittedClearRanking = false;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    //Scene
+    [SerializeField] private string gameClearSceneName = "GameClearScene";
+    [SerializeField] private string gameOverSceneName = "GameOverScene";
+
     //Constant
     const int EventHealAmount = 20;
 
@@ -82,6 +86,7 @@ public class BattleManager : MonoBehaviour
 
     public GameObject shopPanel;
 
+    //Manager
     [SerializeField] private BattleUIManager battleUIManager;
     [SerializeField] private SaveManager saveManager;
     [SerializeField] private ServerRankApiClient serverRankApiClient;
@@ -292,10 +297,28 @@ public class BattleManager : MonoBehaviour
             enemyHp = 0;
 
             HideEnemyText();
+            HideCardButtons();
+            HideDeckActionButtons();
+            HideEventButtons();
+            HideUpgradeSelectButtons();
+            HideRemoveSelectButtons();
+            battleUIManager.HideShopPanel();
+
+            int finalScore=CalculaterFinalScore();
+
+            GameResultData.SetClearResult(
+                finalScore,
+                enemies.Length,
+                playerHp,
+                gold,
+                GetAllPlayerCards().Count);
 
             battleUIManager.SetResultText("보스 처치! Game Clear");
 
-            SubmitClearRankingToServer();
+            SubmitClearRankingToServer(finalScore, () =>
+            {
+                SceneManager.LoadScene(gameClearSceneName);
+            });
         }
         else
         {
@@ -741,8 +764,19 @@ public class BattleManager : MonoBehaviour
         {
             playerHp = 0;
 
+            HideCardButtons();
+            HideDeckActionButtons();
+            HideEventButtons();
+            HideUpgradeSelectButtons();
+            HideRemoveSelectButtons();
+            battleUIManager.HideShopPanel();
+
+            GameResultData.SetGameOverResult(currentEnemyIndex + 1);
+
             battleUIManager.SetResultText("패배...");
             AddLog("플레이어 패배...");
+
+            SceneManager.LoadScene(gameOverSceneName);
         }
     }
 
@@ -1547,16 +1581,16 @@ public class BattleManager : MonoBehaviour
             });
     }
 
-    void SubmitClearRankingToServer()
+    void SubmitClearRankingToServer(int finalScore, System.Action onComplete)
     {
         if (hasSubmittedClearRanking)
         {
+            onComplete?.Invoke();
             return;
         }
 
         hasSubmittedClearRanking = true;
 
-        int finalScore = CalculaterFinalScore();
         int clearStage = enemies.Length;
 
         serverRankApiClient.SaveRankingToServer(
@@ -1567,12 +1601,14 @@ public class BattleManager : MonoBehaviour
             {
                 if (success)
                 {
-                    AddLog("서버 랭킹 저장 완료" + finalScore);
+                    AddLog("서버 랭킹 저장 완료: " + finalScore);
                 }
                 else
                 {
                     AddLog("서버 랭킹 저장 실패");
                 }
+
+                onComplete?.Invoke();
             });
     }
 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SlimeData
   m_EditorClassIdentifier: 
   enemyName: "\uC2AC\uB77C\uC784"
-  maxHp: 50
+  maxHp: 10
   attackDamage: 5
   isBoss: 0
   specialAttackDamage: 0

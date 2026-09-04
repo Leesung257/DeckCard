@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: OrcData
   m_EditorClassIdentifier: 
   enemyName: "\uC624\uD06C"
-  maxHp: 90
+  maxHp: 10
   attackDamage: 12
   isBoss: 0
   specialAttackDamage: 0

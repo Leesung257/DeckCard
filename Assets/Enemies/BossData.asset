@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BossData
   m_EditorClassIdentifier: 
   enemyName: "\uBCF4\uC2A4"
-  maxHp: 120
+  maxHp: 10
   attackDamage: 14
   isBoss: 1
   specialAttackDamage: 25

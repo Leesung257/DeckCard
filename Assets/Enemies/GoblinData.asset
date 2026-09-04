@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GoblinData
   m_EditorClassIdentifier: 
   enemyName: "\uACE0\uBE14\uB9B0"
-  maxHp: 70
+  maxHp: 10
   attackDamage: 8
   isBoss: 0
   specialAttackDamage: 0
