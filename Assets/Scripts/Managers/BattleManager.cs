@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class BattleManager : MonoBehaviour
 {
     [SerializeField] private string testUsername = "lee";
     [SerializeField] private string testPassword = "1234";
+    private bool hasSubmittedClearRanking = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     //Constant
     const int EventHealAmount = 20;
@@ -82,6 +84,7 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField] private BattleUIManager battleUIManager;
     [SerializeField] private SaveManager saveManager;
+    [SerializeField] private ServerRankApiClient serverRankApiClient;
 
     //Battle
     public int playerHp = 100;
@@ -123,6 +126,7 @@ public class BattleManager : MonoBehaviour
 
         InitializeBattleUI();
         InitiallizeSaveManager();
+        InitializeServerRankApiClient();
         InitializeBattleLog();
         InitializeUIState();
         InitializeFirstStage();
@@ -184,6 +188,17 @@ public class BattleManager : MonoBehaviour
             saveManager = gameObject.AddComponent<SaveManager>();
         }
     }
+
+    void InitializeServerRankApiClient()
+    {
+        serverRankApiClient = GetComponent<ServerRankApiClient>();
+
+        if(serverRankApiClient == null)
+        {
+            serverRankApiClient = gameObject.AddComponent<ServerRankApiClient>();
+        }
+    }
+
     void InitializeBattleLog()
     {
         battleUIManager.SetResultText("");
@@ -279,6 +294,8 @@ public class BattleManager : MonoBehaviour
             HideEnemyText();
 
             battleUIManager.SetResultText("보스 처치! Game Clear");
+
+            SubmitClearRankingToServer();
         }
         else
         {
@@ -1530,6 +1547,35 @@ public class BattleManager : MonoBehaviour
             });
     }
 
+    void SubmitClearRankingToServer()
+    {
+        if (hasSubmittedClearRanking)
+        {
+            return;
+        }
+
+        hasSubmittedClearRanking = true;
+
+        int finalScore = CalculaterFinalScore();
+        int clearStage = enemies.Length;
+
+        serverRankApiClient.SaveRankingToServer(
+            testUsername,
+            finalScore,
+            clearStage,
+            (success, response) =>
+            {
+                if (success)
+                {
+                    AddLog("서버 랭킹 저장 완료" + finalScore);
+                }
+                else
+                {
+                    AddLog("서버 랭킹 저장 실패");
+                }
+            });
+    }
+
     //UI - Text
     void AddLog(string message)
     {
@@ -1669,5 +1715,14 @@ public class BattleManager : MonoBehaviour
         result.hpDamage = damage - defense;
         result.remainingDefense = 0;
         return result;
+    }
+
+    int CalculaterFinalScore()
+    {
+        int stageScore = enemies.Length * 1000;
+        int hpScore = playerHp * 10;
+        int goldScore = gold * 5;
+
+        return stageScore + hpScore + goldScore;
     }
 }
