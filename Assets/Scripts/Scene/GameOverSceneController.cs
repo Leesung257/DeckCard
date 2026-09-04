@@ -8,6 +8,7 @@ public class GameOverSceneController : MonoBehaviour
     [SerializeField] private TMP_Text infoText;
 
     [SerializeField] private string battleSceneName = "SampleScene";
+    [SerializeField] private string titleSceneName = "TitleScene";
 
     void Start()
     {
@@ -21,12 +22,18 @@ public class GameOverSceneController : MonoBehaviour
         SceneManager.LoadScene(battleSceneName);
     }
 
+    public void GoToTitleScene()
+    {
+        SceneManager.LoadScene(titleSceneName);
+    }
+
+
     public void QuitGame()
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-    #else
+#else
         Application.Quit();
-    #endif
+#endif
     }
 }
