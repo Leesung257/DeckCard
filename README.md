@@ -449,3 +449,13 @@ Unity 클라이언트와 ASP.NET Core 서버를 연동한 뒤 전체 기능 테�
 ### Server Load Test
 
 ![Load Test](Screenshots/load_test.png)
+
+## Demo GIF
+
+### Server Save / Load
+
+![Server Save Load](Gif/server_save_load.gif)
+
+### Game Clear Ranking
+
+![Game Clear Ranking](Gif/game_clear_ranking.gif)
