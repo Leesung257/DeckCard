@@ -76,6 +76,59 @@ public class ServerAuthApiClient : MonoBehaviour
 
         onComplete?.Invoke(success, request.downloadHandler.text);
     }
+
+    public void DeleteAccount(
+        string username,
+        string password,
+        Action<bool, string> onComplete)
+    {
+        StartCoroutine(SendDeleteAccountRequest(
+            baseUrl + "/api/Auth/delete",
+            username,
+            password,
+            onComplete));
+    }
+
+    private IEnumerator SendDeleteAccountRequest(
+        string url,
+        string username,
+        string password,
+        Action<bool, string> onComplete)
+    {
+        AuthRequest requestData = new AuthRequest
+        {
+            username = username,
+            password = password
+        };
+
+        string json=JsonUtility.ToJson(requestData);
+
+        using UnityWebRequest request = new UnityWebRequest(url, "DELETE");
+
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        bool success = request.result == UnityWebRequest.Result.Success;
+
+        if(success)
+        {
+            Debug.Log("È¸¿ø Å»Åð ¿äÃ» ¼º°ø");
+            Debug.Log(request.downloadHandler.text);
+        }
+        else
+        {
+            Debug.LogError("È¸¿ø Å»Åð ¿äÃ» ½ÇÆÐ");
+            Debug.LogError(request.error);
+            Debug.LogError(request.downloadHandler.text);
+        }
+
+        onComplete?.Invoke(success, request.downloadHandler.text);
+    }
 }
 
 [Serializable]

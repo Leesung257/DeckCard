@@ -11,9 +11,11 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private GameObject titleMenuPanel;
     [SerializeField] private GameObject loginPanel;
     [SerializeField] private GameObject userInfoPanel;
+    [SerializeField] private GameObject deleteAccountPanel;
     [SerializeField] private TMP_Text rankingText;
     [SerializeField] private TMP_InputField usernameInputField;
     [SerializeField] private TMP_InputField passwordInputField;
+    [SerializeField] private TMP_InputField deletePasswordInputField;
     [SerializeField] private TMP_Text loginStatusText;
     [SerializeField] private TMP_Text currentUserText;
 
@@ -27,6 +29,7 @@ public class TitleSceneController : MonoBehaviour
 
         ShowTitleMenu();
         HideRankingPanel();
+        HideDeleteAccountPanel();
 
         RefreshLoginUI();
     }
@@ -319,6 +322,97 @@ public class TitleSceneController : MonoBehaviour
         return builder.ToString();
     }
 
+    public void OpenDeleteAccountPanel()
+    {
+        if (AccountSession.IsLoggedIn == false)
+        {
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "로그인 후 회원 탈퇴를 할 수 있습니다";
+            }
+
+            return;
+        }
+
+        HideTitleMenu();
+
+        if(deletePasswordInputField != null)
+        {
+            deletePasswordInputField.text = "";
+        }
+
+        if(deleteAccountPanel != null)
+        {
+            deleteAccountPanel.SetActive(true);
+        }
+    }
+
+    public void CancelDeleteAccount()
+    {
+        HideDeleteAccountPanel();
+        ShowTitleMenu();
+    }
+
+    public void DeleteAccount()
+    {
+        if(AccountSession.IsLoggedIn == false)
+        {
+            HideDeleteAccountPanel();
+            ShowTitleMenu();
+
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "현재 로그인된 계정이 없습니다";
+            }
+
+            return;
+        }
+
+        string password = deletePasswordInputField.text;
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "비밀번호를 입력해주세요";
+            }
+
+            return;
+        }
+
+        if(loginStatusText!= null)
+        {
+            loginStatusText.text = "회원 탈퇴 요청 중...";
+        }
+
+        serverAuthApiClient.DeleteAccount(
+            AccountSession.Username,
+            password,
+            (success, response) =>
+            {
+                if (success)
+                {
+                    AccountSession.Logout();
+
+                    HideDeleteAccountPanel();
+                    ShowTitleMenu();
+                    RefreshLoginUI();
+
+                    if (loginStatusText != null)
+                    {
+                        loginStatusText.text = "회원 탈퇴가 완료되었습니다";
+                    }
+                }
+                else
+                {
+                    if (loginStatusText != null)
+                    {
+                        loginStatusText.text = "회원 탈퇴 실패";
+                    }
+                }
+            });
+    }
+
     public void CloseRanking()
     {
         HideRankingPanel();
@@ -354,6 +448,14 @@ public class TitleSceneController : MonoBehaviour
         if (rankingPanel != null)
         {
             rankingPanel.SetActive(false);
+        }
+    }
+
+    private void HideDeleteAccountPanel()
+    {
+        if(deleteAccountPanel != null)
+        {
+            deleteAccountPanel.SetActive(false);
         }
     }
 
