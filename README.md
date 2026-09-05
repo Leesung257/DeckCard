@@ -335,3 +335,117 @@ ScriptableObject 기반 데이터 구조와 CardData / CardInstance 분리를 �
 ## 프로젝트 상태
 
 현재 프로젝트는 기능 구현 및 테스트가 완료된 v1.0
+
+## v1.1 주요 업데이트
+
+기존 Unity 덱빌딩 카드 전투 게임에 ASP.NET Core Web API 서버를 연동하여
+계정 기반 저장/불러오기와 랭킹 기능을 추가
+
+### 서버 연동 기능
+
+- ASP.NET Core Web API 서버와 Unity 클라이언트 연동
+- MySQL 기반 회원, 랭킹, 클라우드 저장 데이터 관리
+- 회원가입 / 로그인 / 로그아웃 / 회원 탈퇴 기능 구현
+- 로그인한 계정 정보를 `AccountSession`으로 관리
+- BattleScene에서 현재 로그인한 유저명 표시
+- 계정별 서버 저장 / 불러오기 기능 구현
+- 보스 클리어 시 최종 점수를 서버 랭킹에 저장
+- Top10 랭킹 조회 및 내 랭킹 조회 기능 구현
+- 회원 탈퇴 시 계정, 랭킹 기록, 서버 저장 데이터 삭제
+
+## Scene Flow
+
+### TitleScene
+
+- 회원가입 / 로그인 / 로그아웃 기능 제공
+- 로그인 상태에 따라 LoginPanel과 UserInfoPanel 전환
+- Top10 랭킹 조회
+- 로그인한 계정의 내 랭킹 조회
+- 회원 탈퇴 기능 제공
+- 게임 시작 시 로그인 여부 확인
+
+### BattleScene
+
+- 카드 전투 진행
+- 현재 로그인한 유저명 표시
+- 서버 저장 / 서버 불러오기 기능 제공
+- 전투 중 TitleScene으로 복귀 가능
+- 보스 클리어 시 최종 점수 서버 랭킹 저장
+
+### GameClearScene
+
+- 최종 점수, 도달 스테이지, 남은 HP, 보유 골드, 카드 수 표시
+- Top10 랭킹 조회 가능
+- 로그인한 계정의 내 랭킹 조회 가능
+- TitleScene으로 복귀 가능
+
+### GameOverScene
+
+- 게임 오버 결과 표시
+- 재시작 기능 제공
+- TitleScene으로 복귀 가능
+
+### Account System
+
+- 회원가입과 로그인 기능 구현
+- 서버에서 `PasswordHasher`를 사용하여 비밀번호 해싱 처리
+- Unity에서는 로그인 성공 시 `AccountSession`에 계정 정보를 저장
+- 로그인 상태를 기반으로 서버 저장, 불러오기, 랭킹 저장 기능 수행
+
+### Cloud Save System
+
+- 게임 진행 상황을 JSON 형태로 변환하여 서버에 저장
+- 계정별로 저장 데이터를 분리하여 관리
+- 저장 데이터에는 골드, 플레이어 HP, 현재 스테이지, 카드 목록, 강화 여부 포함
+- 서버 불러오기 시 저장된 JSON 데이터를 다시 Unity 게임 상태로 복원
+
+### Ranking System
+
+- 보스 클리어 시 최종 점수를 계산하여 서버에 저장
+- Top10 랭킹 조회 기능 구현
+- 로그인한 계정의 개인 랭킹 기록 조회 기능 구현
+- 점수, 스테이지, 생성 시간을 기준으로 랭킹 데이터 관리
+
+## Test
+
+### Integration Test
+
+Unity 클라이언트와 ASP.NET Core 서버를 연동한 뒤 전체 기능 테스트를 진행
+
+테스트한 항목
+
+- 회원가입 / 로그인 / 로그아웃
+- 로그인 상태 UI 전환
+- BattleScene 유저명 표시
+- 계정별 서버 저장 / 불러오기
+- 보스 클리어 시 랭킹 저장
+- GameClearScene 랭킹 조회
+- TitleScene Top10 / 내 랭킹 조회
+- 회원 탈퇴 시 계정, 랭킹, 저장 데이터 삭제
+- BattleScene, GameClearScene, GameOverScene 간 씬 이동
+
+전체 통합 테스트 결과 주요 기능이 정상 동작하는 것을 확인
+
+## Screenshots
+
+### TitleScene
+
+![Title](Screenshots/title.png)
+![Title Login](Screenshots/title_login.png)
+
+### BattleScene
+
+![Battle Scene](Screenshots/battle_scene.png)
+
+### GameClearScene
+
+![Game Clear](Screenshots/game_clear.png)
+
+### Ranking
+
+![Top10Ranking](Screenshots/top10ranking.png)
+![MyRanking](Screenshots/myranking.png)
+
+### Server Load Test
+
+![Load Test](Screenshots/load_test.png)
