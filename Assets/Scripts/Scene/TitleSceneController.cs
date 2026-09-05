@@ -8,11 +8,14 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private string battleSceneName = "SampleScene";
 
     [SerializeField] private GameObject rankingPanel;
-    [SerializeField] private TMP_Text rankingText;
     [SerializeField] private GameObject titleMenuPanel;
+    [SerializeField] private GameObject loginPanel;
+    [SerializeField] private GameObject userInfoPanel;
+    [SerializeField] private TMP_Text rankingText;
     [SerializeField] private TMP_InputField usernameInputField;
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_Text loginStatusText;
+    [SerializeField] private TMP_Text currentUserText;
 
     private ServerRankApiClient serverRankApiClient;
     private ServerAuthApiClient serverAuthApiClient;
@@ -22,13 +25,10 @@ public class TitleSceneController : MonoBehaviour
         InitializeServerRankApiClient();
         InitailizeServerAuthApiClient();
 
-        if(loginStatusText!=null )
-        {
-            loginStatusText.text = "로그인이 필요합니다";
-        }
-
         ShowTitleMenu();
         HideRankingPanel();
+
+        RefreshLoginUI();
     }
 
     private void InitializeServerRankApiClient()
@@ -48,6 +48,54 @@ public class TitleSceneController : MonoBehaviour
         if(serverAuthApiClient == null)
         {
             serverAuthApiClient = gameObject.AddComponent<ServerAuthApiClient>();
+        }
+    }
+
+    private void RefreshLoginUI()
+    {
+        if (AccountSession.IsLoggedIn)
+        {
+            if (loginPanel != null)
+            {
+                loginPanel.SetActive(false);
+            }
+
+            if(userInfoPanel!=null)
+            {
+                userInfoPanel.SetActive(true);
+            }
+
+            if (currentUserText != null)
+            {
+                currentUserText.text = AccountSession.Username + "님 로그인 중";
+            }
+
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "로그인 상태입니다";
+            }
+        }
+        else
+        {
+            if(loginPanel != null)
+            {
+                loginPanel.SetActive(true);
+            }
+
+            if (userInfoPanel != null)
+            {
+                userInfoPanel.SetActive(false);
+            }
+
+            if (currentUserText != null)
+            {
+                currentUserText.text = "";
+            }
+
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "로그인이 필요합니다.";
+            }
         }
     }
 
@@ -72,7 +120,12 @@ public class TitleSceneController : MonoBehaviour
                 if (success)
                 {
                     AccountSession.Login(username, password);
-                    loginStatusText.text = "회원가입 성공 / 로그인 완료";
+                    loginStatusText.text = "회원가입 성공";
+
+                    usernameInputField.text = "";
+                    passwordInputField.text = "";
+
+                    RefreshLoginUI();
                 }
                 else
                 {
@@ -102,13 +155,49 @@ public class TitleSceneController : MonoBehaviour
                 if (success)
                 {
                     AccountSession.Login(username, password);
-                    loginStatusText.text = "로그인 성공";
+
+                    usernameInputField.text = "";
+                    passwordInputField.text = "";
+
+                    RefreshLoginUI();
                 }
                 else
                 {
                     loginStatusText.text = "로그인 실패";
                 }
             });
+    }
+
+    public void LogoutAccount()
+    {
+        if (AccountSession.IsLoggedIn == false)
+        {
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "현재 로그인된 계정이 없습니다";
+            }
+
+            return;
+        }
+
+        AccountSession.Logout();
+
+        if (usernameInputField != null)
+        {
+            usernameInputField.text = "";
+        }
+
+        if(passwordInputField != null)
+        {
+            passwordInputField.text = "";
+        }
+
+        RefreshLoginUI() ;
+
+        if(loginStatusText != null)
+        {
+            loginStatusText.text = "로그아웃 되었습니다";
+        }
     }
 
     public void StartGame()

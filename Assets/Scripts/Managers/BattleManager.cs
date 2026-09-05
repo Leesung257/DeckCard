@@ -40,6 +40,8 @@ public class BattleManager : MonoBehaviour
     public TMP_Text battleLogText;
     public TMP_Text goldText;
 
+    public TMP_Text currentUserText;
+
     //Button
     public Button cardButton1;
     public Button cardButton2;
@@ -128,6 +130,7 @@ public class BattleManager : MonoBehaviour
         Debug.Assert(battleUIManager != null, "BattleUIManager 연결 실패");
 
         InitializeBattleUI();
+        UpdateCurrentUserUI();
         InitiallizeSaveManager();
         InitializeServerRankApiClient();
         InitializeBattleLog();
@@ -157,6 +160,7 @@ public class BattleManager : MonoBehaviour
             enemyAttackText,
             battleLogText,
             goldText,
+            currentUserText,
             cardButton1,
             cardButton2,
             cardButton3,
@@ -1631,6 +1635,17 @@ public class BattleManager : MonoBehaviour
             gold);
     }
     
+    void UpdateCurrentUserUI()
+    {
+        if (AccountSession.IsLoggedIn)
+        {
+            battleUIManager.SetCurrentUserText(AccountSession.Username);
+        }
+        else
+        {
+            battleUIManager.SetCurrentUserText("");
+        }
+    }
 
     //UI - Button
     void SetCardButtonText(Button button, CardInstance card)

@@ -25,6 +25,8 @@ public class BattleUIManager : MonoBehaviour
     public TMP_Text enemyAttackText;
     public TMP_Text goldText;
 
+    public TMP_Text currentUserText;
+
     public Button cardButton1;
     public Button cardButton2;
     public Button cardButton3;
@@ -69,6 +71,7 @@ public class BattleUIManager : MonoBehaviour
         TMP_Text enemyAttackText,
         TMP_Text battleLogText,
         TMP_Text goldText,
+        TMP_Text currentUserText,
         Button cardButton1,
         Button cardButton2,
         Button cardButton3,
@@ -105,6 +108,7 @@ public class BattleUIManager : MonoBehaviour
         this.enemyAttackText = enemyAttackText;
         this.battleLogText = battleLogText;
         this.goldText = goldText;
+        this.currentUserText = currentUserText;
         this.cardButton1 = cardButton1;
         this.cardButton2 = cardButton2;
         this.cardButton3 = cardButton3;
@@ -211,6 +215,22 @@ public void InitializeBattleLog()
     public void UpdateGoldUI(int gold)
     {
         goldText.text = "Gold : " + gold;
+    }
+
+    public void SetCurrentUserText(string username)
+    {
+        if (currentUserText == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            currentUserText.text = "로그인 정보 없음";
+            return;
+        }
+
+        currentUserText.text = username + "님 플레이 중";
     }
 
     public void SetResultText(string message)
