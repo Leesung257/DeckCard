@@ -1379,6 +1379,17 @@ public class BattleManager : MonoBehaviour
     }
 
     //Save / Load
+    bool HasLoginAccount()
+    {
+        if (AccountSession.IsLoggedIn == false)
+        {
+            AddLog("로그인이 필요합니다");
+            return false;
+        }
+
+        return true;
+    }
+
     public void SaveGame()
     {
         SaveData saveData = CreateSaveData();
@@ -1543,6 +1554,11 @@ public class BattleManager : MonoBehaviour
 
     public void SaveGameToServer()
     {
+        if (HasLoginAccount() == false)
+        {
+            return;
+        }
+
         SaveData saveData = CreateSaveData();
 
         saveManager.SaveServer(
@@ -1564,6 +1580,11 @@ public class BattleManager : MonoBehaviour
 
     public void LoadGameFromServer()
     {
+        if(HasLoginAccount() == false)
+        {
+            return;
+        }
+
         saveManager.LoadServer(
             AccountSession.Username,
             AccountSession.Password,
@@ -1587,6 +1608,13 @@ public class BattleManager : MonoBehaviour
     {
         if (hasSubmittedClearRanking)
         {
+            onComplete?.Invoke();
+            return;
+        }
+
+        if (AccountSession.IsLoggedIn == false)
+        {
+            AddLog("로그인 정보가 없어 랭킹 저장을 건너뜁니다");
             onComplete?.Invoke();
             return;
         }
