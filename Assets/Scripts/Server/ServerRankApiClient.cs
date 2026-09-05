@@ -104,6 +104,43 @@ public class ServerRankApiClient : MonoBehaviour
             onComplete?.Invoke(false, null);
         }
     }
+
+    public void GetUserRankings(
+        string username,
+        Action<bool, UserRankingResponse> onComplete)
+    {
+        StartCoroutine(GetUserRankingsCoroutine(username, onComplete));
+    }
+
+    public IEnumerator GetUserRankingsCoroutine(
+        string username,
+        Action<bool, UserRankingResponse> onComplete)
+    {
+        string encodeUsername = UnityWebRequest.EscapeURL(username);
+        string url = baseUrl + "/api/Rank/user/" + encodeUsername;
+
+        using UnityWebRequest request = UnityWebRequest.Get(url);
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("유저 랭킹 조회 성공");
+            Debug.Log(request.downloadHandler.text);
+
+            UserRankingResponse response = JsonUtility.FromJson<UserRankingResponse>(request.downloadHandler.text);
+
+            onComplete?.Invoke(response != null, response);
+        }
+        else
+        {
+            Debug.LogError("유저 랭킹 조회 실패");
+            Debug.LogError(request.error);
+            Debug.LogError(request.downloadHandler.text);
+
+            onComplete?.Invoke(false, null);
+        }
+    }
 }
 
 [Serializable]
@@ -127,5 +164,15 @@ public class RankingResponse
 [Serializable]
 public class RankingListResponse
 {
+    public RankingResponse[] rankings;
+}
+
+[Serializable]
+public class UserRankingResponse
+{
+    public string username;
+    public int recordCount;
+    public int bestScore;
+    public int bestStage;
     public RankingResponse[] rankings;
 }
