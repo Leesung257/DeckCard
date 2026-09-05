@@ -8,8 +8,6 @@ using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
-    [SerializeField] private string testUsername = "lee";
-    [SerializeField] private string testPassword = "1234";
     private bool hasSubmittedClearRanking = false;
     //Scene
     [SerializeField] private string gameClearSceneName = "GameClearScene";
@@ -1545,8 +1543,8 @@ public class BattleManager : MonoBehaviour
 
         saveManager.SaveServer(
             saveData,
-            testUsername,
-            testPassword,
+            AccountSession.Username,
+            AccountSession.Password,
             (success, message) =>
             {
                 if (success)
@@ -1563,8 +1561,8 @@ public class BattleManager : MonoBehaviour
     public void LoadGameFromServer()
     {
         saveManager.LoadServer(
-            testUsername,
-            testPassword,
+            AccountSession.Username,
+            AccountSession.Password,
             (success, saveData) =>
             {
                 if (success == false)
@@ -1594,7 +1592,7 @@ public class BattleManager : MonoBehaviour
         int clearStage = enemies.Length;
 
         serverRankApiClient.SaveRankingToServer(
-            testUsername,
+            AccountSession.Username,
             finalScore,
             clearStage,
             (success, response) =>

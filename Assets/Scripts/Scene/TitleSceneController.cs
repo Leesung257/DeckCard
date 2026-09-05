@@ -11,12 +11,21 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private TMP_Text rankingText;
     [SerializeField] private GameObject titleMenuPanel;
     [SerializeField] private TMP_InputField usernameInputField;
+    [SerializeField] private TMP_InputField passwordInputField;
+    [SerializeField] private TMP_Text loginStatusText;
 
     private ServerRankApiClient serverRankApiClient;
+    private ServerAuthApiClient serverAuthApiClient;
 
     private void Start()
     {
         InitializeServerRankApiClient();
+        InitailizeServerAuthApiClient();
+
+        if(loginStatusText!=null )
+        {
+            loginStatusText.text = "로그인이 필요합니다";
+        }
 
         ShowTitleMenu();
         HideRankingPanel();
@@ -32,48 +41,100 @@ public class TitleSceneController : MonoBehaviour
         }
     }
 
+    private void InitailizeServerAuthApiClient()
+    {
+        serverAuthApiClient = GetComponent<ServerAuthApiClient>();
+
+        if(serverAuthApiClient == null)
+        {
+            serverAuthApiClient = gameObject.AddComponent<ServerAuthApiClient>();
+        }
+    }
+
+    public void RegisterAccount()
+    {
+        string username = usernameInputField.text;
+        string password = passwordInputField.text;
+        
+        if(string.IsNullOrWhiteSpace(username)||string.IsNullOrWhiteSpace(password))
+        {
+            loginStatusText.text = "아이디와 비밀번호를 입력해주세요";
+            return;
+        }
+
+        loginStatusText.text = "회원가입 요청 중...";
+
+        serverAuthApiClient.Register(
+            username,
+            password,
+            (success, response) =>
+            {
+                if (success)
+                {
+                    AccountSession.Login(username, password);
+                    loginStatusText.text = "회원가입 성공 / 로그인 완료";
+                }
+                else
+                {
+                    loginStatusText.text = "회원가입 실패";
+                }
+            });
+    }
+
+    public void LoginAccount()
+    {
+        string username = usernameInputField.text;
+        string password = passwordInputField.text;
+
+        if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            loginStatusText.text = "아이디와 비밀번호를 입력해주세요";
+            return;
+        }
+
+        loginStatusText.text = "로그인 요청 중...";
+
+        serverAuthApiClient.Login(
+            username,
+            password,
+            (success, response) =>
+            {
+                if (success)
+                {
+                    AccountSession.Login(username, password);
+                    loginStatusText.text = "로그인 성공";
+                }
+                else
+                {
+                    loginStatusText.text = "로그인 실패";
+                }
+            });
+    }
+
     public void StartGame()
     {
+        if (AccountSession.IsLoggedIn == false)
+        {
+            loginStatusText.text = "로그인 후 게임을 시작해주세요";
+            return;
+        }
+
         SceneManager.LoadScene(battleSceneName);
     }
 
     public void ShowRanking()
     {
-        string username = usernameInputField.text;
-
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            HideTitleMenu();
-            ShowRankingPanel();
-
-            rankingText.text = "아이디를 입력해주세요";
-            return;
-        }
-
         HideTitleMenu();
         ShowRankingPanel();
 
-        rankingText.text = "랭킹 불러오는 중...";
-
-        serverRankApiClient.GetUserRankings(
-            username,
-            (success, response) =>
-            {
-                if (success == false)
-                {
-                    rankingText.text = "해당 사용자의 랭킹 기록이 없습니다.";
-                    return;
-                }
-
-                rankingText.text = FormatMyRanking(response);
-            });
+        rankingText.text = "Top 10 랭킹 불러오는 중...";
 
         serverRankApiClient.GetTop10Rankings(
             (success, rankings) =>
             {
                 if (success == false)
                 {
-                    rankingText.text = "랭킹 조회 실패";
+                    rankingText.text = "Top 10 랭킹 조회 실패";
                     return;
                 }
 
@@ -105,6 +166,39 @@ public class TitleSceneController : MonoBehaviour
         }
 
         return builder.ToString();
+    }
+
+    public void ShowMyRanking()
+    {
+        if (AccountSession.IsLoggedIn == false)
+        {
+            if (loginStatusText != null)
+            {
+                loginStatusText.text = "로그인 후 내 랭킹을 확인할 수 있습니다";
+            }
+
+            return;
+        }
+
+        string username = AccountSession.Username;
+
+        HideTitleMenu();
+        ShowRankingPanel();
+
+        rankingText.text = username + "님의 랭킹 불러오는 중...";
+
+        serverRankApiClient.GetUserRankings(
+            username,
+            (success, response) =>
+            {
+                if (success == false)
+                {
+                    rankingText.text = "해당 사용자의 랭킹 기록이 없습니다";
+                    return;
+                }
+
+                rankingText.text = FormatMyRanking(response);
+            });
     }
 
     private string FormatMyRanking(UserRankingResponse response)
