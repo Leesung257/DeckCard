@@ -12,6 +12,7 @@ public class BattleManager : MonoBehaviour
     //Scene
     [SerializeField] private string gameClearSceneName = "GameClearScene";
     [SerializeField] private string gameOverSceneName = "GameOverScene";
+    [SerializeField] private string titleSceneName = "TitleScene";
 
     //Constant
     const int EventHealAmount = 20;
@@ -1759,6 +1760,11 @@ public class BattleManager : MonoBehaviour
     Button[] GetEventButtons()
     {
         return new Button[] { eventHealButton, eventRemoveButton, eventUpgradeButton };
+    }
+
+    public void GoToTitleScene()
+    {
+        SceneManager.LoadScene(titleSceneName);
     }
 
     struct DamageResult
